@@ -16,8 +16,8 @@ class DBUser(BaseModel):
     last_name = Column(Text, nullable=False)
     middle_name = Column(Text, nullable=False)
 
-    phone_number = Column(Text, nullable=True)
-    email = Column(VARCHAR(63), nullable=True)
+    phone_number = Column(Text, nullable=True, unique=True)
+    email = Column(VARCHAR(63), nullable=True, unique=True)
     active = Column(Boolean, server_default=text("false"))
 
     password = Column(Text, nullable=False)

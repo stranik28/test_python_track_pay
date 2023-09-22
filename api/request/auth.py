@@ -26,8 +26,7 @@ class RequestEmailCode(RequestBase):
 
 
 class RequestEmailCodeVerify(RequestBase):
-    email: str = Field(..., examples=['your_email@gmail.com'])
-    code: str = Field(..., examples=['123456'])
+    code: int = Field(..., examples=[123456])
 
 
 class ChangePassword(RequestBase):

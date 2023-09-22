@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.request.payment import RequestSetPayment
+from api.request.ride import RequestTouch
 from server.depends import get_auth_account_id, get_session, PagesPaginationParams
 
 router = APIRouter(prefix="/ride", tags=['Ride'])
@@ -37,6 +38,15 @@ async def get_recipe(
 @router.post("/ride_dispute", deprecated=True)
 async def get_recipe(
         dispute_form: RequestSetPayment,
+        user_id: int = Depends(get_auth_account_id),
+        session: AsyncSession = Depends(get_session)
+):
+    pass
+
+
+@router.post('/touch', deprecated=True)
+async def touch(
+        data: RequestTouch,
         user_id: int = Depends(get_auth_account_id),
         session: AsyncSession = Depends(get_session)
 ):

@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,11 +9,22 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 
 from configs.config import secret, encrypt_algorithm
-from vendors.db import get_async_session
+
+from vendors.db import async_session
 
 oauth2_scheme_account = OAuth2PasswordBearer(
     tokenUrl='/' + 'auth/login', auto_error=False
 )
+
+
+def get_access_token(self, life_time_days: int = 180) -> str:
+    payload = {
+        'sub': f"{self.id}",
+        'exp': datetime.now() + timedelta(days=life_time_days),
+        'is_email_confirmed': self.active
+    }
+
+    return jwt.encode(payload, secret, algorithm=encrypt_algorithm)
 
 
 def get_payload_from_token(token: str = Depends(oauth2_scheme_account)) -> dict:
@@ -23,8 +35,17 @@ def get_payload_from_token(token: str = Depends(oauth2_scheme_account)) -> dict:
     return payload
 
 
-def get_session() -> AsyncSession:
-    return get_async_session()
+def get_auth_account_id(payload: dict = Depends(get_payload_from_token)) -> int:
+    try:
+        id_: int = int(payload.get('sub'))  # type: ignore
+    except ValueError:
+        return -1
+    return id_
+
+
+async def get_session() -> AsyncSession:
+    async with async_session() as session:
+        yield session
 
 
 def get_payload_from_token_optional(
@@ -36,7 +57,7 @@ def get_payload_from_token_optional(
     return payload
 
 
-def get_auth_account_id(payload: dict = Depends(get_payload_from_token)) -> int:
+def get_auth_account_id_unverified(payload: dict = Depends(get_payload_from_token)) -> int:
     try:
         id_: int = int(payload.get('sub'))  # type: ignore
     except ValueError:
