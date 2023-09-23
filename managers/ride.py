@@ -28,7 +28,7 @@ class RideManager:
         if same_touch == 0:
             return False
         print(len(touches) / same_touch > 0.75)
-        if same_touch > 5 and (len(touches) / same_touch > 0.75):
+        if same_touch > 5 and ((len(touches) / same_touch) > 0.75):
             ride: DBRide = await RideRepository(session).create_ride(transport_id=transport_id, user_id=user_id)
 
             # if await RideRepository(session).pay():
