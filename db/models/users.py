@@ -25,5 +25,3 @@ class DBUser(BaseModel):
     block = Column(Boolean, nullable=False, server_default=text("false"))
 
     limit_rides = Column(Integer, nullable=True)
-
-

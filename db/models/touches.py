@@ -11,7 +11,7 @@ from sqlalchemy.orm import relationship
 class DBTouche(BaseModel):
     __tablename__ = "touches"
 
-    ride_id = Column(Integer, ForeignKey("ride.id", ondelete="CASCADE"), nullable=False)
+    ride_id = Column(Integer, ForeignKey("ride.id", ondelete="CASCADE"), nullable=True)
 
     user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
 

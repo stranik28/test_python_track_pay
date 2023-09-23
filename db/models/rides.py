@@ -7,6 +7,9 @@ from sqlalchemy import (
 )
 
 from sqlalchemy.orm import relationship
+from db.models.ride_status import DBRideStatus
+from db.models.transport import DBTransport
+from db.models.transport_type import DBTransportType
 
 
 class DBRide(BaseModel):

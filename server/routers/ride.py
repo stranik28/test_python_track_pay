@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.request.payment import RequestSetPayment
 from api.request.ride import RequestTouch
+from managers.ride import RideManager
 from server.depends import get_auth_account_id, get_session, PagesPaginationParams
 
 router = APIRouter(prefix="/ride", tags=['Ride'])
@@ -44,10 +45,10 @@ async def get_recipe(
     pass
 
 
-@router.post('/touch', deprecated=True)
+@router.post('/touch')
 async def touch(
         data: RequestTouch,
         user_id: int = Depends(get_auth_account_id),
         session: AsyncSession = Depends(get_session)
 ):
-    pass
+    return await RideManager.touch(session=session, user_id=user_id, bluetooth_id=data.bluetooth_id)

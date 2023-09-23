@@ -141,7 +141,7 @@ def upgrade():
     sa.UniqueConstraint('id', name=op.f('uq_ride_payment_id'))
     )
     op.create_table('touches',
-    sa.Column('ride_id', sa.Integer(), nullable=False),
+    sa.Column('ride_id', sa.Integer(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('bluetooth_device_id', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
@@ -153,6 +153,13 @@ def upgrade():
     sa.PrimaryKeyConstraint('id', name=op.f('pk_touches')),
     sa.UniqueConstraint('id', name=op.f('uq_touches_id'))
     )
+    op.execute('''INSERT INTO transport_type(id, name) VALUES (1, 'Автобус');''')
+    op.execute('''INSERT INTO transport(id, type_id, number, region_numb, price) VALUES (1, 1,'АБ123В', 123, 40);''')
+    op.execute('''INSERT INTO transport(id, type_id, number, region_numb, price) VALUES (2, 1,'АА777А', 93, 40);''')
+    op.execute('''INSERT INTO bluetooth_device(id, transport_id) VALUES (1, 1);''')
+    op.execute('''INSERT INTO bluetooth_device(id, transport_id) VALUES (2, 2);''')
+    op.execute('''INSERT INTO ride_status(id, name, sort) VALUES (1, 'Подтверждена', 1);''')
+    op.execute('''INSERT INTO ride_status(id, name, sort) VALUES (2, 'Оплачена', 2);''')
     # ### end Alembic commands ###
 
 

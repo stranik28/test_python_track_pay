@@ -10,12 +10,12 @@ from db.models.base import Base
 
 from configs.config import db_url
 
+from db.models.ride_status import DBRideStatus
 from db.models.bluetooth_device import DBBluetoothDevise
 from db.models.users import DBUser
 from db.models.payment_status import DBPaymentStatus
 from db.models.preference_accounts import DBPreferenceAccount
 from db.models.ride_payments import DBRidePayment
-from db.models.ride_status import DBRideStatus
 from db.models.rides import DBRide
 from db.models.sbp_accounts import DBUserSBPAccount
 from db.models.touches import DBTouche
