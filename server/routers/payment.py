@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.request.payment import RequestSetPayment, RequestPay
+from managers.payment import PaymentManager
 from server.depends import get_auth_account_id, get_session
 
 router = APIRouter(prefix="/payment", tags=['Payment'])
@@ -40,10 +41,12 @@ async def delete_payment(
     pass
 
 
-@router.post('/pay', deprecated=True)
+@router.post('/pay')
 async def pay(
         ride_info: RequestPay,
         user_id: int = Depends(get_auth_account_id),
         session: AsyncSession = Depends(get_session)
 ):
-    pass
+    payment = await PaymentManager.pay(session=session, user_id=user_id,
+                                       bluetooth_devise_id=ride_info.bluetooth_devise_id)
+    return payment

@@ -1,6 +1,7 @@
-FROM python:3.10-slim AS compile-image
+FROM python:3.10 AS compile-image
 
 ## install dependencies
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends
 
@@ -9,7 +10,8 @@ COPY req.txt .
 RUN pip install --upgrade pip &&  \
     pip install --no-cache-dir -r req.txt
 
-FROM python:3.10-slim AS build-image
+
+FROM python:3.10 AS build-image
 
 # copy env from prev img
 COPY --from=compile-image /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages

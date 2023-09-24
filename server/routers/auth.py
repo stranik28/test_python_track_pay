@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordRequestForm
 
 from api.request.auth import RequestRegistration, RequestEmailCode, ChangePassword, RequestEmailCodeVerify
-from api.response.auth import ResponseUserFactory, ResponseUser
+from api.response.auth import ResponseAuthFactory, ResponseUser
 from db.models.users import DBUser
 from managers.auth import AuthManager
 from server.depends import get_session, get_auth_account_id_unverified
@@ -23,7 +23,7 @@ async def register_user(
                                                    phone_number=registration_data.phone_number,
                                                    email=registration_data.email,
                                                    password=registration_data.password)
-    return ResponseUserFactory.get_user(user=user)
+    return ResponseAuthFactory.get_user(user=user)
 
 
 @router.post('/send_verification_code', summary="Отправить код для верификации e-mail", description="Отправка кода пока не работает, а так ручка рабочая ")
@@ -50,7 +50,7 @@ async def login_user(
 ):
     user = await AuthManager.login(session=session, login=form_data.username, password=form_data.password)
 
-    return ResponseUserFactory.get_user(user=user)
+    return ResponseAuthFactory.get_user(user=user)
 
 
 @router.post('/send_recovery_code', summary="Отправка кода для смены пароля", deprecated=True)

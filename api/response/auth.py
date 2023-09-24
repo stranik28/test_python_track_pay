@@ -8,7 +8,7 @@ class ResponseUser(ResponseBase):
     access_token: str
 
 
-class ResponseUserFactory:
+class ResponseAuthFactory:
 
     @staticmethod
     def get_user(user: DBUser) -> ResponseUser:

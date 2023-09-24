@@ -5,6 +5,8 @@ from sqlalchemy import (
     ForeignKey
 )
 
+from db.models.payment_status import DBPaymentStatus
+
 
 class DBRidePayment(BaseModel):
     __tablename__ = "ride_payment"
@@ -13,6 +15,6 @@ class DBRidePayment(BaseModel):
 
     account_id = Column(Integer, ForeignKey("sbp_account.id", ondelete="CASCADE"), nullable=False)
 
-    amount = Column(Integer, nullable=False)
-
     status_id = Column(Integer, ForeignKey("payment_status.id"), nullable=False)
+
+    amount = Column(Integer, nullable=False)

@@ -3,7 +3,8 @@ from sqlalchemy import (
     Column,
     VARCHAR,
     Integer,
-    ForeignKey
+    ForeignKey,
+    String
 )
 
 from sqlalchemy.orm import relationship
@@ -20,6 +21,10 @@ class DBTransport(BaseModel):
 
     price = Column(Integer, nullable=False)
 
+    route_numb = Column(String, nullable=False)
+
     type = relationship("DBTransportType", lazy="raise", uselist=False)
+
+
 
 

@@ -28,3 +28,11 @@ class DBRide(BaseModel):
     transport = relationship("DBTransport", lazy="raise", uselist=False)
 
     user = relationship("DBUser", lazy="raise", uselist=False)
+
+    @property
+    def ride_name(self) -> str:
+        return self._ride_name
+
+    @ride_name.setter
+    def ride_name(self, ride_name: str):
+        self._ride_name = ride_name

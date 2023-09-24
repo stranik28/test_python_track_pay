@@ -4,7 +4,8 @@ from db.models.rides import DBRide
 from db.repository.base import BaseRepository
 from sqlalchemy import (
     select,
-    and_
+    and_,
+    desc
 )
 from db.models.touches import DBTouche
 from db.models.bluetooth_device import DBBluetoothDevise
@@ -54,3 +55,25 @@ class RideRepository(BaseRepository):
         await self.refresh_model(ride)
 
         return ride
+
+    async def get_ride(self, user_id: int, transport_id: int):
+        query = (
+            select(DBRide)
+            .select_from(DBRide)
+            .where(
+                and_(
+                    DBRide.user_id == user_id,
+                    DBRide.transport_id == transport_id
+                )
+            )
+            .order_by(desc(DBRide.created_at))
+            .limit(1)
+        )
+
+        query = query.options(
+            joinedload(DBRide.status)
+        )
+        query = query.options(
+            joinedload(DBRide.transport)
+        )
+        return await self.all_ones(query)
