@@ -1,0 +1,3 @@
+class BluetoothNotFound(Exception):
+    pass
+

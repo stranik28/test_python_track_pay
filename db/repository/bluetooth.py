@@ -5,14 +5,15 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import joinedload
 
+
 class BluetoothRepository(BaseRepository):
 
-    async def get_by_id(self, bluetooth_id: int) -> DBBluetoothDevise:
+    async def get_by_id(self, bluetooth_mac: str) -> DBBluetoothDevise:
         query = (
             select(DBBluetoothDevise)
             .select_from(DBBluetoothDevise)
             .where(
-                DBBluetoothDevise.id == bluetooth_id
+                DBBluetoothDevise.mac_address == bluetooth_mac
             )
             .limit(1)
         )
@@ -21,4 +22,4 @@ class BluetoothRepository(BaseRepository):
             joinedload(DBBluetoothDevise.transport)
         )
 
-        return await self.one_val(query)
+        return await self.all_ones(query)

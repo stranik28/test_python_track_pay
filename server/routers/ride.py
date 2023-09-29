@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from fastapi.exceptions import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.request.payment import RequestSetPayment
@@ -7,6 +8,7 @@ from api.response.ride import RideResponse, RideResponseFactory
 from db.models.rides import DBRide
 from managers.ride import RideManager
 from server.depends import get_auth_account_id, get_session, PagesPaginationParams
+from vendors.exception import BluetoothNotFound
 
 router = APIRouter(prefix="/ride", tags=['Ride'])
 
@@ -53,6 +55,9 @@ async def touch(
         user_id: int = Depends(get_auth_account_id),
         session: AsyncSession = Depends(get_session)
 ):
-    ride: DBRide = await RideManager.touch(session=session, user_id=user_id, bluetooth_id=data.bluetooth_id)
+    try:
+        ride: DBRide = await RideManager.touch(session=session, user_id=user_id, bluetooth_mac=data.bluetooth_mac)
+    except BluetoothNotFound:
+        raise HTTPException(status_code=404, detail="Устойство bluetooth не найдено в базе!")
 
     return RideResponseFactory.get_from_model(ride)

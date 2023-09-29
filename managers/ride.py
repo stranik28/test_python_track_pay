@@ -8,6 +8,7 @@ from db.repository.ride import RideRepository
 from db.models.touches import DBTouche
 
 from vendors.const import months
+from vendors.exception import BluetoothNotFound
 
 
 class RideManager:
@@ -28,16 +29,16 @@ class RideManager:
         return ride
 
     @classmethod
-    async def touch(cls, session: AsyncSession, bluetooth_id: int, user_id: int) -> DBRide:
+    async def touch(cls, session: AsyncSession, bluetooth_mac: str, user_id: int) -> DBRide:
 
-        await RideRepository(session).add_touch(bluetooth_id=bluetooth_id, account_id=user_id)
-
-        bluetooth: list[DBBluetoothDevise] = await BluetoothRepository(session).get_by_id(bluetooth_id=bluetooth_id)
+        bluetooth: list[DBBluetoothDevise] = await BluetoothRepository(session).get_by_id(bluetooth_mac=bluetooth_mac)
 
         if not bluetooth:
-            return 0
+            raise BluetoothNotFound
 
-        bluetooth = bluetooth
+        bluetooth = bluetooth[0]
+
+        await RideRepository(session).add_touch(bluetooth_id=bluetooth.id, account_id=user_id)
 
         touches: list[DBTouche] = await RideRepository(session).get_touch(account_id=user_id)
 
@@ -47,12 +48,16 @@ class RideManager:
             if i.bluetooth_device.transport.id == bluetooth.transport.id:
                 same_touch += 1
 
-        if same_touch != 0:
-            ride: DBRide = await RideRepository(session).get_ride(user_id=user_id, transport_id=bluetooth.transport.id)
+        if same_touch < 2:
+            ride: list[DBRide] = await RideRepository(session).get_ride(user_id=user_id,
+                                                                  transport_id=bluetooth.transport.id)
         else:
             ride: DBRide = await RideRepository(session).create_ride(transport_id=bluetooth.transport.id,
                                                                      user_id=user_id)
+            ride: list[DBRide] = await RideRepository(session).get_by_id(id_=ride.id)
+
         ride = ride[0]
+
         ride = cls._set_ride_name(ride)
 
         return ride

@@ -36,12 +36,14 @@ class RideResponse(BaseModel):
     payment_method: str = Field(...)
     licence_plate: str = Field(...)
     status: RideStatusResponse = Field(...)
+    qr: str = Field(...)
 
 
 class RideResponseFactory:
 
     @staticmethod
     def get_from_model(model: DBRide) -> RideResponse:
+
         return RideResponse(
             id=model.id,
             name=model.ride_name,
@@ -50,5 +52,6 @@ class RideResponseFactory:
             price=model.transport.price,
             payment_method="СБП",
             licence_plate=str(model.transport.number + model.transport.region_numb),
-            status=RideStatusFactory.get_from_model(model.status)
+            status=RideStatusFactory.get_from_model(model.status),
+            qr="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"
         )

@@ -12,6 +12,8 @@ from configs.config import secret, encrypt_algorithm
 
 from vendors.db import async_session
 
+from fastapi.exceptions import HTTPException
+
 oauth2_scheme_account = OAuth2PasswordBearer(
     tokenUrl='/' + 'auth/login', auto_error=False
 )
@@ -31,7 +33,7 @@ def get_payload_from_token(token: str = Depends(oauth2_scheme_account)) -> dict:
     try:
         payload = jwt.decode(token, secret, algorithms=[encrypt_algorithm])
     except (JWTError, AttributeError):
-        return {"sub": "-1"}
+        raise HTTPException(status_code=401, detail="Неавторизованный аккаунт")
     return payload
 
 
@@ -39,7 +41,7 @@ def get_auth_account_id(payload: dict = Depends(get_payload_from_token)) -> int:
     try:
         id_: int = int(payload.get('sub'))  # type: ignore
     except ValueError:
-        return -1
+        raise HTTPException(status_code=401, detail="Невалидный токен")
     return id_
 
 
@@ -61,7 +63,7 @@ def get_auth_account_id_unverified(payload: dict = Depends(get_payload_from_toke
     try:
         id_: int = int(payload.get('sub'))  # type: ignore
     except ValueError:
-        raise 401
+        raise HTTPException(status_code=401, detail="Неавторизованный аккаунт")
     return id_
 
 
