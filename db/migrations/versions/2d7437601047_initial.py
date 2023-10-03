@@ -173,6 +173,8 @@ def upgrade():
     op.execute('''INSERT INTO transport(id, type_id, number, region_numb, price, route_numb) VALUES (2, 1,'АА777А', 93, 40, '4');''')
     op.execute('''INSERT INTO bluetooth_device(id, transport_id, mac_address) VALUES (1, 1, '00:50:B6:5B:CA:6A');''')
     op.execute('''INSERT INTO bluetooth_device(id, transport_id, mac_address) VALUES (2, 2, '00:12:B6:FB:CA:6A');''')
+    op.execute('''INSERT INTO bluetooth_device(id, transport_id, mac_address) VALUES (3, 2, '80:47:86:74:76:53');''')
+    op.execute('''INSERT INTO bluetooth_device(id, transport_id, mac_address) VALUES (4, 2, '40:AA:56:23:0D:7A');''')
     op.execute('''INSERT INTO ride_status(id, name, sort) VALUES (1, 'Подтверждена', 1);''')
     op.execute('''INSERT INTO ride_status(id, name, sort) VALUES (2, 'Оплачена', 2);''')
     op.execute('''INSERT INTO payment_status(id, name, sort) VALUES (1, 'Ожидается', 1);''')
