@@ -8,6 +8,6 @@ class RequestSetPayment(RequestBase):
 
 
 class RequestPay(RequestBase):
-    bluetooth_devise_id: int = Field(..., examples=['123124'])
+    ride_id: int = Field(..., examples=[1,2,3])
 
 

@@ -1,6 +1,7 @@
 import datetime
 
 from db.models.rides import DBRide
+from db.models.transport import DBTransport
 from db.repository.base import BaseRepository
 from sqlalchemy import (
     select,
@@ -11,7 +12,7 @@ from db.models.touches import DBTouche
 from db.models.bluetooth_device import DBBluetoothDevise
 from datetime import datetime, timedelta
 
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, selectinload
 
 
 class RideRepository(BaseRepository):
@@ -62,6 +63,10 @@ class RideRepository(BaseRepository):
             joinedload(DBRide.transport)
         )
 
+        query = query.options(
+            selectinload(DBRide.transport).joinedload(DBTransport.type)
+        )
+
         return query
 
     async def get_by_id(self, id_: int) -> list[DBRide]:
@@ -88,6 +93,25 @@ class RideRepository(BaseRepository):
             )
             .order_by(desc(DBRide.created_at))
             .limit(1)
+        )
+
+        query = self._add_ride_options(query)
+
+        return await self.all_ones(query)
+
+    async def get_ride_history(self, user_id: int, limit: int, offset: int) -> list[DBRide]:
+        query = (
+            select(DBRide)
+            .select_from(DBRide)
+            .where(
+                and_(
+                    DBRide.user_id == user_id,
+                    DBRide.status_id == 2
+                )
+            )
+            .order_by(desc(DBRide.created_at))
+            .limit(limit)
+            .offset(offset)
         )
 
         query = self._add_ride_options(query)

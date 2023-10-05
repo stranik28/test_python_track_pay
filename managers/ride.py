@@ -8,7 +8,7 @@ from db.repository.ride import RideRepository
 from db.models.touches import DBTouche
 
 from vendors.const import months
-from vendors.exception import BluetoothNotFound
+from vendors.exception import BluetoothNotFound, RideNotFound, AccessDenied
 
 
 class RideManager:
@@ -19,18 +19,16 @@ class RideManager:
         month = ride.created_at.month
         hours = ride.created_at.hour
         minutes = ride.created_at.minute
-        name = f"Поездка {date} {months[month-1]} в {hours}:{minutes}"
+        name = f"Поездка {date} {months[month - 1]} в {hours}:{minutes}"
 
         print(name)
 
-        # print(ride.created_at.strftime("%d %B"))
         ride.ride_name = name
 
         return ride
 
     @classmethod
     async def touch(cls, session: AsyncSession, bluetooth_mac: str, user_id: int) -> DBRide:
-
         bluetooth: list[DBBluetoothDevise] = await BluetoothRepository(session).get_by_id(bluetooth_mac=bluetooth_mac)
 
         if not bluetooth:
@@ -38,35 +36,39 @@ class RideManager:
 
         bluetooth = bluetooth[0]
 
-        await RideRepository(session).add_touch(bluetooth_id=bluetooth.id, account_id=user_id)
-
-        touches: list[DBTouche] = await RideRepository(session).get_touch(account_id=user_id)
-
-        same_touch = 0
-
-        for i in touches:
-            if i.bluetooth_device.transport.id == bluetooth.transport.id:
-                same_touch += 1
-
-        if same_touch < 2:
-            ride: list[DBRide] = await RideRepository(session).get_ride(user_id=user_id,
-                                                                  transport_id=bluetooth.transport.id)
-        else:
-            ride: DBRide = await RideRepository(session).create_ride(transport_id=bluetooth.transport.id,
-                                                                     user_id=user_id)
-            ride: list[DBRide] = await RideRepository(session).get_by_id(id_=ride.id)
+        ride: DBRide = await RideRepository(session).create_ride(transport_id=bluetooth.transport.id,
+                                                                 user_id=user_id)
+        ride: list[DBRide] = await RideRepository(session).get_by_id(id_=ride.id)
 
         ride = ride[0]
 
         ride = cls._set_ride_name(ride)
 
         return ride
-        # background task
-        # if same_touch == 0:
-        #     return False
-        # if same_touch > 5 and ((len(touches) / same_touch) > 0.75):
-        #     ride: DBRide = await RideRepository(session).create_ride(transport_id=transport_id, user_id=user_id)
-        #
-        #     return True
-        # else:
-        #     return False
+
+    @staticmethod
+    async def change_status(session: AsyncSession, status_id: int, ride_id: int) -> None:
+        ride: list[DBRide] = await RideRepository(session).get_by_id(id_=ride_id)
+
+        ride = ride[0]
+
+        ride.status_id = status_id
+
+    @staticmethod
+    async def ride_history(session: AsyncSession, user_id: int, limit: int, offset: int) -> list[DBRide]:
+        return await RideRepository(session).get_ride_history(user_id=user_id,
+                                                              limit=limit,
+                                                              offset=offset)
+
+    @staticmethod
+    async def get_ride(session: AsyncSession, ride_id: int, user_id: int) -> DBRide:
+        ride: list[DBRide] = await RideRepository(session).get_by_id(id_=ride_id)
+
+        if ride == [] or ride is None:
+            raise RideNotFound
+        ride = ride[0]
+        if ride.user_id != user_id:
+            raise AccessDenied
+
+        return ride
+

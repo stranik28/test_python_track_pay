@@ -1,3 +1,4 @@
+from db.models.preference_accounts import DBPreferenceAccount
 from db.models.ride_payments import DBRidePayment
 from db.models.sbp_accounts import DBUserSBPAccount
 from db.repository.base import BaseRepository
@@ -24,13 +25,11 @@ class PaymentRepository(BaseRepository):
         query = (
             select(DBUserSBPAccount)
             .select_from(DBUserSBPAccount)
+            .join(DBPreferenceAccount, DBPreferenceAccount.id == DBUserSBPAccount.id, isouter=False)
             .where(
-                and_(
-                    DBUserSBPAccount.user_id == user_id,
-                    DBUserSBPAccount.active == True
-                )
+                DBPreferenceAccount.user_id == user_id
             )
             .limit(1)
         )
-        # print(query)
+
         return await self.all_ones(query)

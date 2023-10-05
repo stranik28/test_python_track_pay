@@ -4,11 +4,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.request.payment import RequestSetPayment
 from api.request.ride import RequestTouch
-from api.response.ride import RideResponse, RideResponseFactory
+from api.response.ride import RideResponse, RideResponseFactory, RideHistoryResponseFactory
 from db.models.rides import DBRide
 from managers.ride import RideManager
 from server.depends import get_auth_account_id, get_session, PagesPaginationParams
-from vendors.exception import BluetoothNotFound
+from vendors.exception import BluetoothNotFound, AccessDenied, RideNotFound
 
 router = APIRouter(prefix="/ride", tags=['Ride'])
 
@@ -19,15 +19,11 @@ async def get_rides_history(
         session: AsyncSession = Depends(get_session),
         pagination: PagesPaginationParams = Depends()
 ):
-    pass
-
-
-@router.get('/curent_ride', deprecated=True)
-async def get_ride(
-        user_id: int = Depends(get_auth_account_id),
-        session: AsyncSession = Depends(get_session)
-):
-    pass
+    rides: list[DBRide] = await RideManager.ride_history(session=session,
+                                                         user_id=user_id,
+                                                         limit=pagination.limit,
+                                                         offset=pagination.offset)
+    return RideHistoryResponseFactory.get_from_models(rides)
 
 
 @router.get("/ride_recipe/{ride_id}", deprecated=True)
@@ -59,5 +55,21 @@ async def touch(
         ride: DBRide = await RideManager.touch(session=session, user_id=user_id, bluetooth_mac=data.bluetooth_mac)
     except BluetoothNotFound:
         raise HTTPException(status_code=404, detail="Устойство bluetooth не найдено в базе!")
+
+    return RideResponseFactory.get_from_model(ride)
+
+
+@router.get('/{ride_id}', deprecated=True)
+async def get_ride(
+        ride_id: int,
+        user_id: int = Depends(get_auth_account_id),
+        session: AsyncSession = Depends(get_session)
+):
+    try:
+        ride: DBRide = await RideManager.get_ride(session=session, user_id=user_id, ride_id=ride_id)
+    except AccessDenied:
+        raise HTTPException(status_code=403, detail="У вас нет доступа к этой поездке")
+    except RideNotFound:
+        raise HTTPException(status_code=404, detail='Поездка не найдена')
 
     return RideResponseFactory.get_from_model(ride)

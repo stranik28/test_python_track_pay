@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db.models.users import DBUser
 from db.models.verification_code import DBVerifyCode
 from db.repository.auth import AuthRepository
+from vendors.exception import PhoneNotUnique, EmailNotUnique, AccessDenied
 
 
 class AuthManager:
@@ -13,6 +14,12 @@ class AuthManager:
     async def register_user(cls, first_name: str, last_name: str, middle_name: Optional[str],
                             phone_number: Optional[str], email: Optional[str], password: str,
                             session: AsyncSession) -> DBUser:
+
+        if AuthRepository(session).check_phone_unique(phone_numb=phone_number):
+            raise PhoneNotUnique
+        elif AuthRepository(session).check_email_unique(email=email):
+            raise EmailNotUnique
+
         return await AuthRepository(session).create_user(first_name=first_name,
                                                          last_name=last_name,
                                                          middle_name=middle_name,
@@ -37,7 +44,7 @@ class AuthManager:
         if user.password == password:
             return user
         else:
-            return -1
+            return AccessDenied
 
     @classmethod
     async def verify_code(cls, session: AsyncSession, account_id: int, code: int) -> bool:

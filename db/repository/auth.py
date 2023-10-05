@@ -10,6 +10,28 @@ from db.repository.base import BaseRepository
 
 class AuthRepository(BaseRepository):
 
+    async def check_phone_unique(self, phone_numb: str) -> list[DBUser]:
+        query = (
+            select(DBUser)
+            .select_from(DBUser)
+            .where(
+                DBUser.phone_number == phone_numb
+            ).limit(1)
+        )
+
+        return await self.all_ones(query)
+
+    async def check_email_unique(self, email: str) -> list[DBUser]:
+        query = (
+            select(DBUser)
+            .select_from(DBUser)
+            .where(
+                DBUser.email == email
+            ).limit(1)
+        )
+
+        return await self.all_ones(query)
+
     async def create_user(self, first_name: str, last_name: str, middle_name: Optional[str],
                           phone_number: Optional[str], email: Optional[str], password: str) -> DBUser:
         user: DBUser = DBUser(

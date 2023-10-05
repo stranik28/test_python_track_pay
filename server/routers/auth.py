@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from fastapi.exceptions import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from fastapi.security import OAuth2PasswordRequestForm
@@ -8,6 +9,7 @@ from api.response.auth import ResponseAuthFactory, ResponseUser
 from db.models.users import DBUser
 from managers.auth import AuthManager
 from server.depends import get_session, get_auth_account_id_unverified
+from vendors.exception import EmailNotUnique, PhoneNotUnique, AccessDenied
 
 router = APIRouter(prefix="/auth", tags=['Auth'])
 
@@ -17,16 +19,23 @@ async def register_user(
         registration_data: RequestRegistration,
         session: AsyncSession = Depends(get_session)
 ):
-    user: DBUser = await AuthManager.register_user(session=session, first_name=registration_data.first_name,
-                                                   last_name=registration_data.last_name,
-                                                   middle_name=registration_data.middle_name,
-                                                   phone_number=registration_data.phone_number,
-                                                   email=registration_data.email,
-                                                   password=registration_data.password)
+    try:
+        user: DBUser = await AuthManager.register_user(session=session, first_name=registration_data.first_name,
+                                                       last_name=registration_data.last_name,
+                                                       middle_name=registration_data.middle_name,
+                                                       phone_number=registration_data.phone_number,
+                                                       email=registration_data.email,
+                                                       password=registration_data.password)
+    except PhoneNotUnique:
+        raise HTTPException(status_code=422, detail='Такой номер телефона уже зарегистрирован')
+    except EmailNotUnique:
+        raise HTTPException(status_code=422, detail='Такой email уже зарегистрирован')
+
     return ResponseAuthFactory.get_user(user=user)
 
 
-@router.post('/send_verification_code', summary="Отправить код для верификации e-mail", description="Отправка кода пока не работает, а так ручка рабочая ")
+@router.post('/send_verification_code', summary="Отправить код для верификации e-mail",
+             description="Отправка кода пока не работает, а так ручка рабочая ")
 async def verification_code(
         account_id: int = Depends(get_auth_account_id_unverified),
         session: AsyncSession = Depends(get_session)
@@ -48,7 +57,10 @@ async def login_user(
         form_data: OAuth2PasswordRequestForm = Depends(),
         session: AsyncSession = Depends(get_session)
 ):
-    user = await AuthManager.login(session=session, login=form_data.username, password=form_data.password)
+    try:
+        user = await AuthManager.login(session=session, login=form_data.username, password=form_data.password)
+    except AccessDenied:
+        raise HTTPException(status_code=401, detail='Не правильный логин или пароль')
 
     return ResponseAuthFactory.get_user(user=user)
 

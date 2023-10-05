@@ -1,6 +1,6 @@
 from typing import Optional
 
-from api.response.base import BaseModel
+from api.response.base import ResponseBase
 from pydantic import Field
 from datetime import datetime
 
@@ -8,7 +8,7 @@ from db.models.ride_status import DBRideStatus
 from db.models.rides import DBRide
 
 
-class RideStatusResponse(BaseModel):
+class RideStatusResponse(ResponseBase):
     id: int = Field(...)
     name: str = Field(...)
 
@@ -17,14 +17,13 @@ class RideStatusFactory:
 
     @staticmethod
     def get_from_model(model: DBRideStatus) -> RideStatusResponse:
-
         return RideStatusResponse(
             id=model.id,
             name=model.name
         )
 
 
-class RideResponse(BaseModel):
+class RideResponse(ResponseBase):
     id: int = Field(...)
     name: str = Field(...)
     start_time: Optional[datetime] = Field(None)
@@ -39,11 +38,18 @@ class RideResponse(BaseModel):
     qr: str = Field(...)
 
 
+class RideHistoryResponse(ResponseBase):
+    id: int = Field(...)
+    ride_name: str = Field(...)
+    price: int = Field(...)
+    time: datetime = Field(...)
+    status: str = Field(...)
+
+
 class RideResponseFactory:
 
     @staticmethod
     def get_from_model(model: DBRide) -> RideResponse:
-
         return RideResponse(
             id=model.id,
             name=model.ride_name,
@@ -55,3 +61,20 @@ class RideResponseFactory:
             status=RideStatusFactory.get_from_model(model.status),
             qr="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"
         )
+
+
+class RideHistoryResponseFactory:
+
+    @staticmethod
+    def get_from_model(ride: DBRide) -> RideHistoryResponse:
+        return RideHistoryResponse(
+            id=ride.id,
+            time=ride.created_at,
+            price=ride.transport.price,
+            status=ride.status.name,
+            name=ride.transport.type.name + " " + ride.transport.name
+        )
+
+    @classmethod
+    def get_from_models(cls, rides: list[DBRide]) -> list[RideHistoryResponse]:
+        return [cls.get_from_model(ride) for ride in rides]
