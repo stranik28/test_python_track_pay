@@ -72,7 +72,7 @@ class RideHistoryResponseFactory:
             time=ride.created_at,
             price=ride.transport.price,
             status=ride.status.name,
-            name=ride.transport.type.name + " " + ride.transport.name
+            ride_name=ride.transport.type.name + " " + ride.transport.route_numb
         )
 
     @classmethod

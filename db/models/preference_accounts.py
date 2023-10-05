@@ -18,4 +18,4 @@ class DBPreferenceAccount(BaseModel):
 
     user = relationship("DBUser", lazy="raise", uselist=False)
 
-    account = relationship("DBUserSBPAccounts", lazy='raise', uselist=False)
+    account = relationship("DBUserSBPAccount", lazy='raise', uselist=False)

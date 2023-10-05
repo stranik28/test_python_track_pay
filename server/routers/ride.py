@@ -13,7 +13,7 @@ from vendors.exception import BluetoothNotFound, AccessDenied, RideNotFound
 router = APIRouter(prefix="/ride", tags=['Ride'])
 
 
-@router.get('/history', deprecated=True)
+@router.get('/history')
 async def get_rides_history(
         user_id: int = Depends(get_auth_account_id),
         session: AsyncSession = Depends(get_session),

@@ -54,6 +54,10 @@ class RideManager:
 
         ride.status_id = status_id
 
+        await session.commit()
+
+
+
     @staticmethod
     async def ride_history(session: AsyncSession, user_id: int, limit: int, offset: int) -> list[DBRide]:
         return await RideRepository(session).get_ride_history(user_id=user_id,

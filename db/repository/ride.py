@@ -60,10 +60,6 @@ class RideRepository(BaseRepository):
             joinedload(DBRide.status)
         )
         query = query.options(
-            joinedload(DBRide.transport)
-        )
-
-        query = query.options(
             selectinload(DBRide.transport).joinedload(DBTransport.type)
         )
 
