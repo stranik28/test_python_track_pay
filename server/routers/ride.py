@@ -59,7 +59,7 @@ async def touch(
     return RideResponseFactory.get_from_model(ride)
 
 
-@router.get('/{ride_id}', deprecated=True)
+@router.get('/{ride_id}')
 async def get_ride(
         ride_id: int,
         user_id: int = Depends(get_auth_account_id),
