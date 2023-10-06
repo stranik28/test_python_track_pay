@@ -66,7 +66,7 @@ def upgrade():
     )
     op.create_table('sbp_account',
     sa.Column('account_id', sa.Integer(), nullable=False),
-    sa.Column('active', sa.Boolean(), server_default=sa.text('false'), nullable=False),
+    sa.Column('active', sa.Boolean(), server_default=sa.text('true'), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),

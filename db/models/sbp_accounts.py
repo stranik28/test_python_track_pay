@@ -15,7 +15,7 @@ class DBUserSBPAccount(BaseModel):
 
     account_id = Column(Integer, nullable=False, index=True)
 
-    active = Column(Boolean, nullable=False, server_default=text("false"))
+    active = Column(Boolean, nullable=False, server_default=text("true"))
 
     user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"), nullable=False, index=True)
 
