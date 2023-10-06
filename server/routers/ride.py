@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.request.payment import RequestSetPayment
 from api.request.ride import RequestTouch
-from api.response.ride import RideResponse, RideResponseFactory, RideHistoryResponseFactory
+from api.response.ride import RideResponse, RideResponseFactory, RideHistoryResponseFactory, RideHistoryResponse
 from db.models.rides import DBRide
 from managers.ride import RideManager
 from server.depends import get_auth_account_id, get_session, PagesPaginationParams
@@ -13,7 +13,7 @@ from vendors.exception import BluetoothNotFound, AccessDenied, RideNotFound
 router = APIRouter(prefix="/ride", tags=['Ride'])
 
 
-@router.get('/history')
+@router.get('/history', response_model=list[RideHistoryResponse])
 async def get_rides_history(
         user_id: int = Depends(get_auth_account_id),
         session: AsyncSession = Depends(get_session),
@@ -59,7 +59,7 @@ async def touch(
     return RideResponseFactory.get_from_model(ride)
 
 
-@router.get('/{ride_id}')
+@router.get('/{ride_id}', response_model=RideResponse)
 async def get_ride(
         ride_id: int,
         user_id: int = Depends(get_auth_account_id),
