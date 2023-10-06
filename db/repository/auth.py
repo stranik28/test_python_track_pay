@@ -119,11 +119,16 @@ class AuthRepository(BaseRepository):
 
     async def secure_spam(self, account_id: int) -> list[DBVerifyCode]:
 
+        fifteen_minutes_ago = datetime.datetime.now() - datetime.timedelta(minutes=15)
+
         query = (
             select(DBVerifyCode)
             .select_from(DBVerifyCode)
             .where(
-                DBVerifyCode.account_id == account_id
+                and_(
+                    DBVerifyCode.account_id == account_id,
+                    DBVerifyCode.created_at >= fifteen_minutes_ago
+                )
             )
             .order_by(desc(DBVerifyCode.created_at))
             .limit(1)

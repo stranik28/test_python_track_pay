@@ -14,7 +14,7 @@ from managers.auth import AuthManager
 
 from server.depends import get_session, get_auth_account_id_unverified
 
-from vendors.exception import EmailNotUnique, PhoneNotUnique, AccessDenied
+from vendors.exception import EmailNotUnique, PhoneNotUnique, AccessDenied, SpamError
 
 router = APIRouter(prefix="/auth", tags=['Auth'])
 
@@ -44,7 +44,10 @@ async def verification_code(
         account_id: int = Depends(get_auth_account_id_unverified),
         session: AsyncSession = Depends(get_session)
 ):
-    await AuthManager.send_code(session=session, account_id=account_id)
+    try:
+        await AuthManager.send_code(session=session, account_id=account_id)
+    except SpamError:
+        HTTPException(status_code=403, detail="Оправлять сообщения на 1 почту можно не чаще 1 раза в 15 минут")
 
 
 @router.get('/verify/{verification_data}')
