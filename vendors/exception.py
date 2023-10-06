@@ -20,3 +20,11 @@ class PhoneNotUnique(Exception):
 
 class EmailNotUnique(Exception):
     pass
+
+
+class CodeNotValid(Exception):
+    pass
+
+
+class SpamError(Exception):
+    pass

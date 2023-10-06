@@ -1,14 +1,19 @@
 from fastapi import APIRouter, Depends
 from fastapi.exceptions import HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-
+from fastapi.responses import HTMLResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
-from api.request.auth import RequestRegistration, RequestEmailCode, ChangePassword, RequestEmailCodeVerify
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from api.request.auth import RequestRegistration, RequestEmailCode, ChangePassword
 from api.response.auth import ResponseAuthFactory, ResponseUser
+
 from db.models.users import DBUser
+
 from managers.auth import AuthManager
+
 from server.depends import get_session, get_auth_account_id_unverified
+
 from vendors.exception import EmailNotUnique, PhoneNotUnique, AccessDenied
 
 router = APIRouter(prefix="/auth", tags=['Auth'])
@@ -34,8 +39,7 @@ async def register_user(
     return ResponseAuthFactory.get_user(user=user)
 
 
-@router.post('/send_verification_code', summary="Отправить код для верификации e-mail",
-             description="Отправка кода пока не работает, а так ручка рабочая ")
+@router.post('/send_verification_code')
 async def verification_code(
         account_id: int = Depends(get_auth_account_id_unverified),
         session: AsyncSession = Depends(get_session)
@@ -43,13 +47,25 @@ async def verification_code(
     await AuthManager.send_code(session=session, account_id=account_id)
 
 
-@router.post('/verify_code', summary="Верифицкация кода от e-mail", description="Пока всегда Тру")
+@router.get('/verify/{verification_data}')
 async def verifycation_code_verify(
-        verification_data: RequestEmailCodeVerify,
-        account_id: int = Depends(get_auth_account_id_unverified),
+        verification_data: int,
         session: AsyncSession = Depends(get_session)
 ):
-    return await AuthManager.verify_code(session=session, account_id=account_id, code=verification_data.code)
+    await AuthManager.verify_code(session=session, code=verification_data)
+    # HTML-разметка для ответа
+    html_content = '''
+    <html>
+    <head>
+        <title>Результат верификации</title>
+    </head>
+    <body>
+        <h1>Спасибо за регистрацию, можете пользоваться приложением</h1>
+    </body>
+    </html>
+    '''
+
+    return HTMLResponse(content=html_content)
 
 
 @router.post('/login', summary="Логин")

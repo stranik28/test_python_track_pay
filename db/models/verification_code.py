@@ -2,9 +2,6 @@ from db.models.base import BaseModel
 from sqlalchemy import (
     Column,
     Boolean,
-    text,
-    Text,
-    VARCHAR,
     Integer,
     ForeignKey
 )

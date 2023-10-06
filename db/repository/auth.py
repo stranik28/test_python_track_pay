@@ -1,3 +1,4 @@
+import datetime
 from typing import Optional
 
 from sqlalchemy import select, desc, and_
@@ -26,7 +27,10 @@ class AuthRepository(BaseRepository):
             select(DBUser)
             .select_from(DBUser)
             .where(
-                DBUser.email == email
+                and_(
+                    DBUser.email == email,
+                    DBUser.active == True
+                )
             ).limit(1)
         )
 
@@ -79,15 +83,18 @@ class AuthRepository(BaseRepository):
 
         return await self.one_val(query)
 
-    async def get_code(self, account_id: int) -> Optional[DBVerifyCode]:
+    async def get_code(self, code: int) -> list[DBVerifyCode]:
+
+        fifteen_minutes_ago = datetime.datetime.now() - datetime.timedelta(minutes=15)
 
         query = (
             select(DBVerifyCode)
             .select_from(DBVerifyCode)
             .where(
                 and_(
-                    DBVerifyCode.account_id == account_id,
-                    DBVerifyCode.used == False
+                    DBVerifyCode.code == code,
+                    DBVerifyCode.used == False,
+                    DBVerifyCode.created_at >= fifteen_minutes_ago
                 )
             )
             .order_by(desc(DBVerifyCode.created_at))
@@ -98,4 +105,28 @@ class AuthRepository(BaseRepository):
             joinedload(DBVerifyCode.account, innerjoin=True)
         )
 
-        return await self.one_val(query)
+        return await self.all_ones(query)
+
+    async def register_code(self, user_id: id, code: id):
+
+        model = DBVerifyCode(
+            account_id=user_id,
+            code=code,
+            type_of_code=0
+        )
+
+        await self.add_model(model)
+
+    async def secure_spam(self, account_id: int) -> list[DBVerifyCode]:
+
+        query = (
+            select(DBVerifyCode)
+            .select_from(DBVerifyCode)
+            .where(
+                DBVerifyCode.account_id == account_id
+            )
+            .order_by(desc(DBVerifyCode.created_at))
+            .limit(1)
+        )
+
+        return await self.all_ones(query)

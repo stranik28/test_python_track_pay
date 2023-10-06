@@ -52,9 +52,11 @@ async def pay(
 ):
     try:
         await PaymentManager.pay(session=session, user_id=user_id, ride_id=ride_info.ride_id)
+
     except RideNotFound:
         raise HTTPException(status_code=404, detail="Поездка не найдена")
+
     except PaymentAccountNotFound:
         raise HTTPException(status_code=404, detail="Для оплаты проезда снчала выберете основной способ оплаты")
-    print("Payed")
+
     await RideManager.change_status(session=session, status_id=2, ride_id=ride_info.ride_id)

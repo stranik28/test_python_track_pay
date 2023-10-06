@@ -14,3 +14,8 @@ db_url = f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME
 
 secret = os.environ.get("secret_key")
 encrypt_algorithm = os.environ.get('encrypt_algorithm')
+
+SMTP_USER = os.environ.get("SMTP_USER")
+SMTP_PORT = os.environ.get("SMTP_PORT")
+SMTP_PASS = os.environ.get("SMTP_PASS")
+SMTP_SERVER = os.environ.get("SMTP_SERVER")
