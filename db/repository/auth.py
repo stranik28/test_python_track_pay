@@ -107,16 +107,6 @@ class AuthRepository(BaseRepository):
 
         return await self.all_ones(query)
 
-    async def register_code(self, user_id: id, code: id):
-
-        model = DBVerifyCode(
-            account_id=user_id,
-            code=code,
-            type_of_code=0
-        )
-
-        await self.add_model(model)
-
     async def secure_spam(self, account_id: int) -> list[DBVerifyCode]:
 
         fifteen_minutes_ago = datetime.datetime.now() - datetime.timedelta(minutes=15)

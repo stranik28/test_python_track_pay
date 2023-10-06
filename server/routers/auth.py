@@ -47,7 +47,7 @@ async def verification_code(
     try:
         await AuthManager.send_code(session=session, account_id=account_id)
     except SpamError:
-        HTTPException(status_code=403, detail="Оправлять сообщения на 1 почту можно не чаще 1 раза в 15 минут")
+        raise HTTPException(status_code=403, detail="Оправлять сообщения на 1 почту можно не чаще 1 раза в 15 минут")
 
 
 @router.get('/verify/{verification_data}')

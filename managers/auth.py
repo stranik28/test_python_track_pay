@@ -18,7 +18,6 @@ class AuthManager:
 
     @staticmethod
     async def send_code_to_email(to: str, link: str):
-
         msg = MIMEMultipart()
         msg['From'] = SMTP_USER
         msg['To'] = to
@@ -55,18 +54,18 @@ class AuthManager:
     @classmethod
     async def send_code(cls, session: AsyncSession, account_id: int) -> None:
         code = random.randint(0, 2000000)
-        await AuthRepository(session).send_code(account_id=account_id, code=code)
 
         account: DBUser = await AuthRepository(session).get_by_id(account_id=account_id)
 
         link = f'http://185.192.246.110:8000/auth/verify/{code}'
 
         if len(await AuthRepository(session).secure_spam(account_id)) > 0:
+
             raise SpamError
 
         await cls.send_code_to_email(to=account.email, link=link)
 
-        await AuthRepository(session).register_code(user_id=account_id, code=code)
+        await AuthRepository(session).send_code(account_id=account_id, code=code)
 
     @classmethod
     async def login(cls, session: AsyncSession, login: str, password: str):
