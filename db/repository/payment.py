@@ -33,3 +33,38 @@ class PaymentRepository(BaseRepository):
         )
 
         return await self.all_ones(query)
+
+    async def add_payment(self,
+                          user_id: int,
+                          sbp_account: int) -> None:
+
+        model = DBUserSBPAccount(
+            account_id=user_id,
+            user_id=sbp_account
+        )
+
+        await self.add_model(model)
+
+    async def get_by_sbp_account(self, user_id: int, payment_id: int) -> list[DBUserSBPAccount]:
+
+        query = (
+            select(DBUserSBPAccount)
+            .select_from(DBUserSBPAccount)
+            .where(
+                and_(
+                    DBUserSBPAccount.user_id == user_id,
+                    DBUserSBPAccount.id == payment_id
+                )
+            )
+        )
+
+        return await self.all_ones(query)
+
+    async def create_new_payment_main(self, user_id: int, payment_account: int) -> None:
+
+        model = DBPreferenceAccount(
+            user_id=user_id,
+            account_id=payment_account
+        )
+
+        await self.add_model(model)

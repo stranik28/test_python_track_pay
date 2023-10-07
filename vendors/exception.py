@@ -28,3 +28,7 @@ class CodeNotValid(Exception):
 
 class SpamError(Exception):
     pass
+
+
+class DeleteMainPaymentMethod(Exception):
+    pass
