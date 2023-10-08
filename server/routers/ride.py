@@ -47,13 +47,13 @@ async def get_recipe(
 
 @router.post('/touch', response_model=RideResponse)
 async def touch(
-        datas: list[RequestTouch],
+        datas: RequestTouch,
         user_id: int = Depends(get_auth_account_id),
         session: AsyncSession = Depends(get_session)
 ):
-    for data in datas:
+    for data in datas.bluetooth_mac:
         try:
-            ride: DBRide = await RideManager.touch(session=session, user_id=user_id, bluetooth_mac=data.bluetooth_mac)
+            ride: DBRide = await RideManager.touch(session=session, user_id=user_id, bluetooth_mac=data)
         except BluetoothNotFound:
             continue
         if ride is not None:
