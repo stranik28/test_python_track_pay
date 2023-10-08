@@ -47,16 +47,18 @@ async def get_recipe(
 
 @router.post('/touch', response_model=RideResponse)
 async def touch(
-        data: RequestTouch,
+        datas: list[RequestTouch],
         user_id: int = Depends(get_auth_account_id),
         session: AsyncSession = Depends(get_session)
 ):
-    try:
-        ride: DBRide = await RideManager.touch(session=session, user_id=user_id, bluetooth_mac=data.bluetooth_mac)
-    except BluetoothNotFound:
-        raise HTTPException(status_code=404, detail="Устойство bluetooth не найдено в базе!")
-
-    return RideResponseFactory.get_from_model(ride)
+    for data in datas:
+        try:
+            ride: DBRide = await RideManager.touch(session=session, user_id=user_id, bluetooth_mac=data.bluetooth_mac)
+        except BluetoothNotFound:
+            continue
+        if ride is not None:
+            return RideResponseFactory.get_from_model(ride)
+    raise HTTPException(status_code=404, detail="Устойство bluetooth не найдено в базе!")
 
 
 @router.get('/{ride_id}', response_model=RideResponse)
