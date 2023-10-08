@@ -9,4 +9,4 @@ class RequestSetPayment(RequestBase):
 
 
 class RequestTouch(RequestBase):
-    bluetooth_mac: str = Field(..., examples=['00:50:B6:5B:CA:6A'])
+    bluetooth_mac: list[str] = Field(..., examples=[list['00:50:B6:5B:CA:6A']])
