@@ -77,7 +77,7 @@ async def get_ride(
     return RideResponseFactory.get_from_model(ride)
 
 
-@router.post('/touch_esp')
+@router.get('/touch_esp')
 async def touch(
         uuid: str
 ):
