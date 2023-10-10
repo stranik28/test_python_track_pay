@@ -61,6 +61,14 @@ async def touch(
     raise HTTPException(status_code=404, detail="Устойство bluetooth не найдено в базе!")
 
 
+@router.get('/touch_esp')
+async def touch(
+        uuid: str
+):
+    print(f"Ought uuid is {uuid}")
+    return {"result": uuid}
+
+
 @router.get('/{ride_id}', response_model=RideResponse)
 async def get_ride(
         ride_id: int,
@@ -75,11 +83,3 @@ async def get_ride(
         raise HTTPException(status_code=404, detail='Поездка не найдена')
 
     return RideResponseFactory.get_from_model(ride)
-
-
-@router.get('/touch_esp')
-async def touch(
-        uuid: str
-):
-    print(f"Ought uuid is {uuid}")
-    return {"result": uuid}
