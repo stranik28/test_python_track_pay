@@ -75,3 +75,11 @@ async def get_ride(
         raise HTTPException(status_code=404, detail='Поездка не найдена')
 
     return RideResponseFactory.get_from_model(ride)
+
+
+@router.post('/touch_esp')
+async def touch(
+        uuid: str
+):
+    print(f"Ought uuid is {uuid}")
+    return {"result": uuid}
