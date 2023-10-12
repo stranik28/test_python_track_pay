@@ -19,6 +19,7 @@ depends_on = None
 def upgrade():
     op.execute('''INSERT INTO bluetooth_device(id, transport_id, mac_address) VALUES (5, 2, '30:AE:A4:74:A2:C6');''')
     op.execute('''INSERT INTO preference_account(id, user_id, account_id) VALUES (1, 1, 1);''')
+    op.execute('''INSERT INTO bluetooth_device(id, transport_id, mac_address) VALUES (6, 2, '80:38:FB:13:0F:73');''')
 
 
 def downgrade():
