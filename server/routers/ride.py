@@ -61,11 +61,12 @@ async def touch(
     raise HTTPException(status_code=404, detail="Устойство bluetooth не найдено в базе!")
 
 
-@router.get('/touch_esp')
+@router.get('/touch_esp/{esp_id}/{uuid}')
 async def touch(
-        uuid: str
+        uuid: str,
+        esp_id: int
 ):
-    print(f"Ought uuid is {uuid}")
+    print(f"Ought uuid is {uuid} from esp {esp_id}")
     return {"result": uuid}
 
 
