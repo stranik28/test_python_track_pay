@@ -87,7 +87,7 @@ class RideManager:
     @classmethod
     async def esp_touch(cls, session: AsyncSession, uuid: str, esp_id: int):
         user_exist: list[DBUuidUsers] = await UserRepository(session).get_user_by_uuid(uuid)
-
+        print(user_exist)
         if user_exist == []:
             print("User")
             raise UserNotFound
