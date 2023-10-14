@@ -89,6 +89,7 @@ class RideManager:
         user_exist: list[DBUuidUsers] = await UserRepository(session).get_user_by_uuid(uuid)
 
         if user_exist == []:
+            print("User")
             raise UserNotFound
 
         user_exist = user_exist[0]
@@ -99,11 +100,15 @@ class RideManager:
 
         if last_touches != []:
             if last_touches[0] < 5:
+                print("Not sure")
+                print(last_touches[0])
+                print(last_touches)
                 raise NotSureToCreateRide
 
         esp: list[DBBluetoothDevise] = await BluetoothRepository(session).get_bluetooth_by_esp_id(esp_id=esp_id)
 
         if esp == []:
+            print("esp")
             raise EspNotFound
 
         esp = esp[0]
@@ -111,6 +116,7 @@ class RideManager:
         last_ride = await RideRepository(session).get_full_ride_history(user_id=user_exist.id, limit=1, offset=0)
 
         if last_ride != []:
+            print("Уже покатался")
             raise RideAlreadyDone
 
         ride = await RideRepository(session).create_ride(user_id=user_exist.id, transport_id=esp.transport.id)
