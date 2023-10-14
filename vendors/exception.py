@@ -32,3 +32,14 @@ class SpamError(Exception):
 
 class DeleteMainPaymentMethod(Exception):
     pass
+
+
+class UserNotFound(Exception):
+    pass
+
+
+class NotSureToCreateRide(Exception):
+    pass
+
+class EspNotFound(Exception):
+    pass
