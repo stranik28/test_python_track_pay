@@ -84,6 +84,24 @@ class RideManager:
 
         return ride
 
+    @staticmethod
+    def send_message(registration_token: str):
+        from firebase_admin import messaging
+        message = messaging.Message(
+            notification=messaging.Notification(
+                title="Оплати проезд!",
+                body="Вы в автобусе!"
+            ),
+            android=messaging.AndroidConfig(
+                priority="high"  # Высокий приоритет
+            ),
+            token=registration_token,
+            data={
+                "id": "8"
+            }
+        )
+        response = messaging.send(message)
+        return
     @classmethod
     async def esp_touch(cls, session: AsyncSession, uuid: str, esp_id: int):
         user_exist: list[DBUuidUsers] = await UserRepository(session).get_user_by_uuid(uuid)
