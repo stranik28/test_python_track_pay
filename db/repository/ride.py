@@ -117,7 +117,7 @@ class RideRepository(BaseRepository):
         end_time = datetime.now()
         start_time = end_time - time
         query = (
-            select([func.count(DBTouche.id)])
+            select(func.count(DBTouche.id))
             .select_from(DBTouche)
             .where(
                 and_(
@@ -128,6 +128,8 @@ class RideRepository(BaseRepository):
         )
 
         return await self.all_ones(query)
+
+    # 0000fef3-0000-1000-8000-00805f9b34fb
 
     async def get_full_ride_history(self, user_id: int, limit: int, offset: int) -> list[DBRide]:
         query = (

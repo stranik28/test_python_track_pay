@@ -108,8 +108,6 @@ class RideManager:
         if last_ride != []:
             raise ValueError
 
-
-
         ride = await RideRepository(session).create_ride(user_id=user_exist, transport_id=esp.transport.id)
 
         # Send push
