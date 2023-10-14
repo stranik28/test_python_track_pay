@@ -86,7 +86,7 @@ class RideManager:
     @classmethod
     async def esp_touch(cls, session: AsyncSession, uuid: str, esp_id: int):
         user_exist: list[DBUuidUsers] = await UserRepository(session).get_user_by_uuid(uuid)
-        if user_exist:
+        if user_exist == []:
             raise ValueError
         user_exist = user_exist[0]
         await RideRepository(session).add_touch(uuid=uuid, esp_id=esp_id)
@@ -94,12 +94,12 @@ class RideManager:
         timdelta = datetime.timedelta(seconds=40)
         last_touches: int = await RideRepository(session).count_last_touche(uuid=uuid, time=timdelta)
 
-        if last_touches:
+        if last_touches == []:
             raise ValueError
 
         esp: list[DBBluetoothDevise] = await BluetoothRepository(session).get_bluetooth_by_esp_id(esp_id=esp_id)
 
-        if esp:
+        if esp == []:
             raise ValueError
         esp = esp[0]
 
