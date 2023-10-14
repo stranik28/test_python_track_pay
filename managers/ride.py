@@ -101,6 +101,7 @@ class RideManager:
             }
         )
         response = messaging.send(message)
+        print(response)
         return
     @classmethod
     async def esp_touch(cls, session: AsyncSession, uuid: str, esp_id: int):
