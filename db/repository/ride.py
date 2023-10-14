@@ -131,13 +131,18 @@ class RideRepository(BaseRepository):
 
     # 0000fef3-0000-1000-8000-00805f9b34fb
 
-    async def get_full_ride_history(self, user_id: int, limit: int, offset: int) -> list[DBRide]:
+    async def get_full_ride_history(self, user_id: int, limit: int, offset: int, timedelta_: timedelta,
+                                    transport_id: int) -> list[DBRide]:
+        end_time = datetime.now()
+        start_time = end_time - timedelta_
         query = (
             select(DBRide)
             .select_from(DBRide)
             .where(
                 and_(
                     DBRide.user_id == user_id,
+                    DBRide.created_at >= start_time,
+                    DBRide.transport_id == transport_id
                 )
             )
             .order_by(desc(DBRide.created_at))

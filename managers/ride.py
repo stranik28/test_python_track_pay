@@ -14,7 +14,7 @@ from db.repository.user import UserRepository
 
 from vendors.const import months
 from vendors.exception import BluetoothNotFound, RideNotFound, AccessDenied, UserNotFound, NotSureToCreateRide, \
-    EspNotFound
+    EspNotFound, RideAlreadyDone
 
 
 class RideManager:
@@ -89,7 +89,7 @@ class RideManager:
         user_exist: list[DBUuidUsers] = await UserRepository(session).get_user_by_uuid(uuid)
 
         if user_exist == []:
-            raise UserNotFound("Пользователь с таким uuid не найден ")
+            raise UserNotFound()
 
         user_exist = user_exist[0]
         await RideRepository(session).add_touch(uuid=uuid, esp_id=esp_id)
@@ -99,19 +99,19 @@ class RideManager:
 
         if last_touches != []:
             if last_touches[0] > 0:
-                raise NotSureToCreateRide("Недостаточно пока оснований для создания поездки")
+                raise NotSureToCreateRide()
 
         esp: list[DBBluetoothDevise] = await BluetoothRepository(session).get_bluetooth_by_esp_id(esp_id=esp_id)
 
         if esp == []:
-            raise EspNotFound("Не найденно доверненного устрйоства с таким id")
+            raise EspNotFound()
 
         esp = esp[0]
 
         last_ride = await RideRepository(session).get_full_ride_history(user_id=user_exist.id, limit=1, offset=0)
 
         if last_ride != []:
-            raise ValueError
+            raise RideAlreadyDone()
 
         ride = await RideRepository(session).create_ride(user_id=user_exist.id, transport_id=esp.transport.id)
 

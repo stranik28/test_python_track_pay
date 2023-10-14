@@ -8,7 +8,7 @@ from api.response.ride import RideResponse, RideResponseFactory, RideHistoryResp
 from db.models.rides import DBRide
 from managers.ride import RideManager
 from server.depends import get_auth_account_id, get_session, PagesPaginationParams
-from vendors.exception import BluetoothNotFound, AccessDenied, RideNotFound
+from vendors.exception import BluetoothNotFound, AccessDenied, RideNotFound, UserNotFound, NotSureToCreateRide
 
 router = APIRouter(prefix="/ride", tags=['Ride'])
 
@@ -67,7 +67,15 @@ async def touch(
         esp_id: int,
         session: AsyncSession = Depends(get_session)
 ):
-    register_touch = await RideManager.esp_touch(session=session, uuid=uuid, esp_id=esp_id)
+    try:
+        register_touch = await RideManager.esp_touch(session=session, uuid=uuid, esp_id=esp_id)
+    except UserNotFound:
+        HTTPException(status_code=404, detail="Пользователь с таким uuid не найден ")
+    except NotSureToCreateRide:
+        HTTPException(status_code=404, detail="Недостаточно пока оснований для создания поездки")
+    except :
+        HTTPException(status_code=400, detail="Не найденно доверненного устрйоства с таким id")
+    except
     print(f"Ought uuid is {uuid} from esp {esp_id}")
     return {"result": uuid}
 

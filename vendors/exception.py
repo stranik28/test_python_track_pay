@@ -41,5 +41,10 @@ class UserNotFound(Exception):
 class NotSureToCreateRide(Exception):
     pass
 
+
 class EspNotFound(Exception):
+    pass
+
+
+class RideAlreadyDone(Exception):
     pass

@@ -6,7 +6,7 @@ from api.request.payment import RequestSetPayment, RequestPay
 from managers.payment import PaymentManager
 from managers.ride import RideManager
 from server.depends import get_auth_account_id, get_session
-from vendors.exception import RideNotFound, PaymentAccountNotFound, DeleteMainPaymentMethod
+from vendors.exception import RideNotFound, PaymentAccountNotFound, DeleteMainPaymentMethod, EspNotFound
 
 router = APIRouter(prefix="/payment", tags=['Payment'])
 
@@ -65,7 +65,7 @@ async def pay(
     except RideNotFound:
         raise HTTPException(status_code=404, detail="Поездка не найдена")
 
-    except PaymentAccountNotFound:
+    except EspNotFound:
         raise HTTPException(status_code=404, detail="Для оплаты проезда снчала выберете основной способ оплаты")
 
     await RideManager.change_status(session=session, status_id=2, ride_id=ride_info.ride_id)
