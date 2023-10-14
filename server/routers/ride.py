@@ -61,11 +61,13 @@ async def touch(
     raise HTTPException(status_code=404, detail="Устойство bluetooth не найдено в базе!")
 
 
-@router.get('/touch_esp/{esp_id}/{uuid}')
+@router.get('/touch_esp/{esp_id}/{uuid}', status_code=200)
 async def touch(
         uuid: str,
-        esp_id: int
+        esp_id: int,
+        session: AsyncSession = Depends(get_session)
 ):
+    register_touch = await RideManager.esp_touch(session=session, uuid=uuid, esp_id=esp_id)
     print(f"Ought uuid is {uuid} from esp {esp_id}")
     return {"result": uuid}
 

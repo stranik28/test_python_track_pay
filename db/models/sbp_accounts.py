@@ -20,3 +20,13 @@ class DBUserSBPAccount(BaseModel):
     user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"), nullable=False, index=True)
 
     user = relationship("DBUser", uselist=False, lazy="raise")
+
+    @property
+    def ride_primary(self) -> bool:
+        if self.ride_primary:
+            return self.ride_primary
+        return False
+
+    @ride_primary.setter
+    def ride_primary(self, primary: bool):
+        self.ride_primary = primary

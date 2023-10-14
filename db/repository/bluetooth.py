@@ -23,3 +23,19 @@ class BluetoothRepository(BaseRepository):
         )
 
         return await self.all_ones(query)
+
+    async def get_bluetooth_by_esp_id(self, esp_id: int) -> list[DBBluetoothDevise]:
+
+        query = (
+            select(DBBluetoothDevise)
+            .select_from(DBBluetoothDevise)
+            .where(
+                DBBluetoothDevise.id == esp_id
+            )
+            .limit(1)
+        )
+
+        query = query.options(
+            joinedload(DBBluetoothDevise.transport))
+
+        return await self.all_ones(query)

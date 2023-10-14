@@ -1,11 +1,16 @@
+import datetime
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.models.bluetooth_device import DBBluetoothDevise
 from db.models.rides import DBRide
+from db.models.user_uuid import DBUuidUsers
+from db.models.users import DBUser
 from db.repository.bluetooth import BluetoothRepository
 from db.repository.ride import RideRepository
 
 from db.models.touches import DBTouche
+from db.repository.user import UserRepository
 
 from vendors.const import months
 from vendors.exception import BluetoothNotFound, RideNotFound, AccessDenied
@@ -77,4 +82,40 @@ class RideManager:
         ride = cls._set_ride_name(ride)
 
         return ride
+
+    @classmethod
+    async def esp_touch(cls, session: AsyncSession, uuid: str, esp_id: int):
+        user_exist: list[DBUuidUsers] = await UserRepository(session).get_user_by_uuid(uuid)
+        if user_exist:
+            raise ValueError
+        user_exist = user_exist[0]
+        await RideRepository(session).add_touch(uuid=uuid, esp_id=esp_id)
+        # timdelta = datetime.timedelta(minutes=10)
+        timdelta = datetime.timedelta(seconds=40)
+        last_touches: int = await RideRepository(session).count_last_touche(uuid=uuid, time=timdelta)
+
+        if last_touches:
+            raise ValueError
+
+        esp: list[DBBluetoothDevise] = await BluetoothRepository(session).get_bluetooth_by_esp_id(esp_id=esp_id)
+
+        if esp:
+            raise ValueError
+        esp = esp[0]
+
+        last_ride = await RideRepository(session).get_full_ride_history(user_id=user_exist.id, limit=1, offset=0)
+
+        if last_ride != []:
+            raise ValueError
+
+
+
+        ride = await RideRepository(session).create_ride(user_id=user_exist, transport_id=esp.transport.id)
+
+        # Send push
+
+        print("Success Ride")
+
+        return ride
+
 

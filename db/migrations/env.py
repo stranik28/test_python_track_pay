@@ -22,6 +22,7 @@ from db.models.touches import DBTouche
 from db.models.transport import DBTransport
 from db.models.transport_type import DBTransportType
 from db.models.verification_code import DBVerifyCode
+from db.models.user_uuid import DBUuidUsers
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

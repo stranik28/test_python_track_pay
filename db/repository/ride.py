@@ -1,12 +1,11 @@
-import datetime
-
 from db.models.rides import DBRide
 from db.models.transport import DBTransport
 from db.repository.base import BaseRepository
 from sqlalchemy import (
     select,
     and_,
-    desc
+    desc,
+    func
 )
 from db.models.touches import DBTouche
 from db.models.bluetooth_device import DBBluetoothDevise
@@ -17,10 +16,10 @@ from sqlalchemy.orm import joinedload, selectinload
 
 class RideRepository(BaseRepository):
 
-    async def add_touch(self, bluetooth_id: int, account_id: int) -> None:
+    async def add_touch(self, esp_id: int, uuid: str) -> None:
         model = DBTouche(
-            user_id=account_id,
-            bluetooth_device_id=bluetooth_id
+            esp_id=esp_id,
+            uuid=uuid
         )
 
         return await self.add_model(model)
@@ -111,5 +110,37 @@ class RideRepository(BaseRepository):
         )
 
         query = self._add_ride_options(query)
+
+        return await self.all_ones(query)
+
+    async def count_last_touche(self, uuid: str, time: timedelta):
+        end_time = datetime.now()
+        start_time = end_time - time
+        query = (
+            select([func.count()])
+            .select_from(DBTouche)
+            .where(
+                and_(
+                    DBTouche.uuid == uuid,
+                    DBTouche.created_at >= start_time,
+                )
+            )
+        )
+
+        return await self.all_ones(query)
+
+    async def get_full_ride_history(self, user_id: int, limit: int, offset: int) -> list[DBRide]:
+        query = (
+            select(DBRide)
+            .select_from(DBRide)
+            .where(
+                and_(
+                    DBRide.user_id == user_id,
+                )
+            )
+            .order_by(desc(DBRide.created_at))
+            .limit(limit)
+            .offset(offset)
+        )
 
         return await self.all_ones(query)

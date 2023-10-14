@@ -36,7 +36,7 @@ class PaymentRepository(BaseRepository):
 
     async def add_payment(self,
                           user_id: int,
-                          sbp_account: int) -> None:
+                          sbp_account: int) -> DBUserSBPAccount:
 
         model = DBUserSBPAccount(
             account_id=user_id,
@@ -44,6 +44,8 @@ class PaymentRepository(BaseRepository):
         )
 
         await self.add_model(model)
+
+        return await self.refresh_model(model)
 
     async def get_by_sbp_account(self, user_id: int, payment_id: int) -> list[DBUserSBPAccount]:
 
@@ -68,3 +70,15 @@ class PaymentRepository(BaseRepository):
         )
 
         await self.add_model(model)
+
+    async def get_payments_account(self, user_id: int) -> list[DBUserSBPAccount]:
+
+        query = (
+            select(DBUserSBPAccount)
+            .select_from(DBUserSBPAccount)
+            .where(
+                DBUserSBPAccount.user_id == user_id
+            )
+        )
+
+        return await self.all_ones(query)

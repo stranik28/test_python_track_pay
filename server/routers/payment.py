@@ -11,12 +11,12 @@ from vendors.exception import RideNotFound, PaymentAccountNotFound, DeleteMainPa
 router = APIRouter(prefix="/payment", tags=['Payment'])
 
 
-@router.get('/', deprecated=True)
+@router.get('/', response_model=list[int])
 async def get_my_payments(
         user_id: int = Depends(get_auth_account_id),
         session: AsyncSession = Depends(get_session)
 ):
-    pass
+    await PaymentManager.get_payments_methods(session=session, user_id=user_id)
 
 
 @router.patch('/set_new_payment', status_code=204)
