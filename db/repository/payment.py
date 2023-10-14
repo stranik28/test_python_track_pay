@@ -1,3 +1,5 @@
+from typing import Optional
+
 from db.models.preference_accounts import DBPreferenceAccount
 from db.models.ride_payments import DBRidePayment
 from db.models.sbp_accounts import DBUserSBPAccount
@@ -11,10 +13,10 @@ from sqlalchemy import (
 
 class PaymentRepository(BaseRepository):
 
-    async def pay(self, ride_id: int, account_id: int, status_id: int, ammount: int):
+    async def pay(self, ride_id: int, account_id: Optional[int], status_id: int, ammount: int):
         model = DBRidePayment(
             ride_id=ride_id,
-            account_id=account_id,
+            # account_id=account_id,
             status_id=status_id,
             amount=ammount
         )

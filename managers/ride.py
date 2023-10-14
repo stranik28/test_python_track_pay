@@ -146,5 +146,3 @@ class RideManager:
         await cls.send_message(user_exist.token)
 
         return ride
-
-

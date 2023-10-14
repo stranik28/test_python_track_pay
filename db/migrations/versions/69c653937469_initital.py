@@ -1,8 +1,8 @@
-"""initial
+"""Initital
 
-Revision ID: 2d7437601047
+Revision ID: 69c653937469
 Revises: 
-Create Date: 2023-09-30 00:33:52.973431
+Create Date: 2023-10-14 13:47:44.018960
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '2d7437601047'
+revision = '69c653937469'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -91,6 +91,17 @@ def upgrade():
     sa.UniqueConstraint('id', name=op.f('uq_transport_id'))
     )
     op.create_index(op.f('ix_transport_number'), 'transport', ['number'], unique=True)
+    op.create_table('uuid_device',
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('uuid', sa.String(), nullable=False),
+    sa.Column('token', sa.String(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+    sa.Column('updated_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], name=op.f('fk_uuid_device_user_id_user'), ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_uuid_device')),
+    sa.UniqueConstraint('id', name=op.f('uq_uuid_device_id'))
+    )
     op.create_table('verify_code',
     sa.Column('account_id', sa.Integer(), nullable=False),
     sa.Column('code', sa.Integer(), nullable=False),
@@ -111,9 +122,9 @@ def upgrade():
     sa.Column('updated_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
     sa.ForeignKeyConstraint(['transport_id'], ['transport.id'], name=op.f('fk_bluetooth_device_transport_id_transport'), ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_bluetooth_device')),
-    sa.UniqueConstraint('id', name=op.f('uq_bluetooth_device_id')),
-    sa.UniqueConstraint('mac_address', name=op.f('uq_bluetooth_device_mac_address'))
+    sa.UniqueConstraint('id', name=op.f('uq_bluetooth_device_id'))
     )
+    op.create_index(op.f('ix_bluetooth_device_mac_address'), 'bluetooth_device', ['mac_address'], unique=True)
     op.create_table('preference_account',
     sa.Column('account_id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
@@ -156,15 +167,12 @@ def upgrade():
     sa.UniqueConstraint('id', name=op.f('uq_ride_payment_id'))
     )
     op.create_table('touches',
-    sa.Column('ride_id', sa.Integer(), nullable=True),
-    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('uuid', sa.String(), nullable=False),
     sa.Column('bluetooth_device_id', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
     sa.Column('updated_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
     sa.ForeignKeyConstraint(['bluetooth_device_id'], ['bluetooth_device.id'], name=op.f('fk_touches_bluetooth_device_id_bluetooth_device'), ondelete='RESTRICT'),
-    sa.ForeignKeyConstraint(['ride_id'], ['ride.id'], name=op.f('fk_touches_ride_id_ride'), ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], name=op.f('fk_touches_user_id_user'), ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_touches')),
     sa.UniqueConstraint('id', name=op.f('uq_touches_id'))
     )
@@ -175,6 +183,7 @@ def upgrade():
     op.execute('''INSERT INTO bluetooth_device(id, transport_id, mac_address) VALUES (2, 2, '00:12:B6:FB:CA:6A');''')
     op.execute('''INSERT INTO bluetooth_device(id, transport_id, mac_address) VALUES (3, 2, '80:47:86:74:76:53');''')
     op.execute('''INSERT INTO bluetooth_device(id, transport_id, mac_address) VALUES (4, 2, '40:AA:56:23:0D:7A');''')
+    op.execute('''INSERT INTO ride_status(id, name, sort) VALUES (3, 'Инициализирована', 0)''')
     op.execute('''INSERT INTO ride_status(id, name, sort) VALUES (1, 'Подтверждена', 1);''')
     op.execute('''INSERT INTO ride_status(id, name, sort) VALUES (2, 'Оплачена', 2);''')
     op.execute('''INSERT INTO payment_status(id, name, sort) VALUES (1, 'Ожидается', 1);''')
@@ -186,6 +195,11 @@ def upgrade():
         '123', false, null, 1);'''
     )
     op.execute('''INSERT INTO sbp_account(user_id, account_id, active) VALUES (1, 1, true);''')
+    op.execute('''INSERT INTO uuid_device(id,token,uuid, user_id) VALUES (1, 'co8Kp5PNR_uBLOShRgndZn:APA91bEPcavU3wdsg3ZJaXy6MZqALYAJUuIffXq85kj719tvNCO6UNDVp5Ezw2-l0Kk-jRlBO7U1ZBZ3kFdk14vMIJ-7vDMGWdW2c2apncF61kELYXihYHcr2211PVpxPwQUZIZkKvs7', 'e32cb627-ea88-49d6-8854-0429206e125f', 1);''')
+    op.execute('''INSERT INTO bluetooth_device(id, transport_id, mac_address) VALUES (5, 2, '30:AE:A4:74:A2:C6');''')
+    op.execute('''INSERT INTO preference_account(id, user_id, account_id) VALUES (1, 1, 1);''')
+    op.execute('''INSERT INTO bluetooth_device(id, transport_id, mac_address) VALUES (6, 2, '80:38:FB:13:0F:73');''')
+
     # ### end Alembic commands ###
 
 
@@ -196,8 +210,10 @@ def downgrade():
     op.drop_table('ride')
     op.drop_index(op.f('ix_preference_account_user_id'), table_name='preference_account')
     op.drop_table('preference_account')
+    op.drop_index(op.f('ix_bluetooth_device_mac_address'), table_name='bluetooth_device')
     op.drop_table('bluetooth_device')
     op.drop_table('verify_code')
+    op.drop_table('uuid_device')
     op.drop_index(op.f('ix_transport_number'), table_name='transport')
     op.drop_table('transport')
     op.drop_index(op.f('ix_sbp_account_user_id'), table_name='sbp_account')

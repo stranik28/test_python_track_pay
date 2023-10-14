@@ -24,14 +24,14 @@ class PaymentManager:
 
         status_id = 2
 
-        payment_account_id = await PaymentRepository(session).get_payment_account(user_id=user_id)
+        # payment_account_id = await PaymentRepository(session).get_payment_account(user_id=user_id)
 
-        if payment_account_id is None or payment_account_id == []:
-            raise PaymentAccountNotFound
+        # if payment_account_id is None or payment_account_id == []:
+        #     raise PaymentAccountNotFound
 
-        payment_account_id = payment_account_id[0]
+        # payment_account_id = payment_account_id[0]
 
-        await PaymentRepository(session).pay(ride_id=ride.id, account_id=payment_account_id.id, status_id=status_id,
+        await PaymentRepository(session).pay(ride_id=ride.id, account_id=None, status_id=status_id,
                                              ammount=ride.transport.price)
 
         return status_id
