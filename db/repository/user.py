@@ -29,4 +29,4 @@ class UserRepository(BaseRepository):
             .limit(1)
         )
 
-        return await self.all_ones(query)
+        return await self.all(query)
