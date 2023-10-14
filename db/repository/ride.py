@@ -18,7 +18,7 @@ class RideRepository(BaseRepository):
 
     async def add_touch(self, esp_id: int, uuid: str) -> None:
         model = DBTouche(
-            esp_id=esp_id,
+            bluetooth_device_id=esp_id,
             uuid=uuid
         )
 
