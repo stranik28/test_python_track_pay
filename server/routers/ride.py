@@ -71,13 +71,13 @@ async def touch(
     try:
         await RideManager.esp_touch(session=session, uuid=uuid, esp_id=esp_id)
     except UserNotFound:
-        return HTTPException(status_code=404, detail="Пользователь с таким uuid не найден ")
+        raise HTTPException(status_code=404, detail="Пользователь с таким uuid не найден ")
     except NotSureToCreateRide:
-        return HTTPException(status_code=401, detail="Недостаточно пока оснований для создания поездки")
+        raise HTTPException(status_code=401, detail="Недостаточно пока оснований для создания поездки")
     except RideAlreadyDone:
-        return HTTPException(status_code=401, detail="Недостаточно пока оснований для создания поездки")
+        raise HTTPException(status_code=401, detail="Недостаточно пока оснований для создания поездки")
     except EspNotFound:
-        return HTTPException(status_code=400, detail="Не найденно доверненного устрйоства с таким id")
+        raise HTTPException(status_code=400, detail="Не найденно доверненного устрйоства с таким id")
     print(f"Ought uuid is {uuid} from esp {esp_id}")
     return {"result": uuid}
 
