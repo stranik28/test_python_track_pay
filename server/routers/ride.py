@@ -69,7 +69,7 @@ async def touch(
         session: AsyncSession = Depends(get_session)
 ):
     try:
-        register_touch = await RideManager.esp_touch(session=session, uuid=uuid, esp_id=esp_id)
+        await RideManager.esp_touch(session=session, uuid=uuid, esp_id=esp_id)
     except UserNotFound:
         HTTPException(status_code=404, detail="Пользователь с таким uuid не найден ")
     except NotSureToCreateRide:
