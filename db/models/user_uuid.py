@@ -14,8 +14,8 @@ class DBUuidUsers(BaseModel):
 
     user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
 
-    uuid = Column(String, nullable=False, index=True)
+    uuid = Column(String, nullable=False)
 
-    token = Column(String, nullable=False, index=True)
+    token = Column(String, nullable=False)
 
     user = relationship("DBUser", lazy="raise", uselist=False)
