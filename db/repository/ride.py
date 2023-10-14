@@ -117,7 +117,7 @@ class RideRepository(BaseRepository):
         end_time = datetime.now()
         start_time = end_time - time
         query = (
-            select([func.count()])
+            select([func.count(DBTouche.id)])
             .select_from(DBTouche)
             .where(
                 and_(
