@@ -40,11 +40,11 @@ class RideRepository(BaseRepository):
 
         return await self.all_ones(query)
 
-    async def create_ride(self, user_id: int, transport_id: int) -> DBRide:
+    async def create_ride(self, user_id: int, transport_id: int, status_id: int = 1) -> DBRide:
         ride = DBRide(
             user_id=user_id,
             transport_id=transport_id,
-            status_id=1
+            status_id=status_id
         )
 
         await self.add_model(ride)
