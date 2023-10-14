@@ -97,8 +97,9 @@ class RideManager:
         timdelta = datetime.timedelta(seconds=40)
         last_touches: int = await RideRepository(session).count_last_touche(uuid=uuid, time=timdelta)
 
-        if last_touches == []:
-            raise NotSureToCreateRide("Недостаточно пока оснований для создания поездки")
+        if last_touches != []:
+            if last_touches[0] > 0:
+                raise NotSureToCreateRide("Недостаточно пока оснований для создания поездки")
 
         esp: list[DBBluetoothDevise] = await BluetoothRepository(session).get_bluetooth_by_esp_id(esp_id=esp_id)
 
