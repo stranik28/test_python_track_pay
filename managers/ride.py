@@ -104,7 +104,7 @@ class RideManager:
         esp: list[DBBluetoothDevise] = await BluetoothRepository(session).get_bluetooth_by_esp_id(esp_id=esp_id)
 
         if esp == []:
-            raise EspNotFound()
+            raise EspNotFound
 
         esp = esp[0]
 
