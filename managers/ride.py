@@ -110,6 +110,7 @@ class RideManager:
             print("User")
             raise UserNotFound
         user_exist = user_exist[0]
+        user_exist = user_exist[0]
 
         await RideRepository(session).add_touch(uuid=uuid, esp_id=esp_id)
         # timdelta = datetime.timedelta(minutes=10)
