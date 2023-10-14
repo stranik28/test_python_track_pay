@@ -85,7 +85,7 @@ class RideManager:
         return ride
 
     @staticmethod
-    def send_message(registration_token: str):
+    async def send_message(registration_token: str):
         from firebase_admin import messaging
         message = messaging.Message(
             notification=messaging.Notification(
@@ -102,7 +102,7 @@ class RideManager:
         )
         response = messaging.send(message)
         print(response)
-        return
+
     @classmethod
     async def esp_touch(cls, session: AsyncSession, uuid: str, esp_id: int):
         user_exist: list[DBUuidUsers] = await UserRepository(session).get_user_by_uuid(uuid)
@@ -141,6 +141,8 @@ class RideManager:
         # Send push
 
         print("Success Ride")
+
+        await cls.send_message(esp.token)
 
         return ride
 
