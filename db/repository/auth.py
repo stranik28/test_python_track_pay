@@ -142,4 +142,8 @@ class AuthRepository(BaseRepository):
             username=username
         )
 
-        return await self.add_model(model)
+        await self.add_model(model)
+
+        await self.refresh_model(model)
+
+        return model
