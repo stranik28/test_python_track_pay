@@ -71,10 +71,11 @@ class AuthManager:
     async def login(cls, session: AsyncSession, login: str, password: str):
         user: DBUser = await AuthRepository(session).login(login=login)
 
-        if user.password == password:
-            return user
-        else:
-            return AccessDenied
+
+        # if user.password == password:
+        return user
+        # else:
+        #     return AccessDenied
 
     @classmethod
     async def verify_code(cls, session: AsyncSession, code: int) -> None:

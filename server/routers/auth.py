@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.request.auth import RequestRegistration, RequestEmailCode, ChangePassword
+from api.request.auth import RequestRegistration, RequestEmailCode, ChangePassword, RequestRegistrationForum
 from api.response.auth import ResponseAuthFactory, ResponseUser
 
 from db.models.users import DBUser
@@ -21,7 +21,7 @@ router = APIRouter(prefix="/auth", tags=['Auth'])
 
 @router.post('/register_user', summary="Регистрация пользователя", response_model=ResponseUser)
 async def register_user(
-        registration_data: RequestRegistration,
+        registration_data: RequestRegistrationForum,
         session: AsyncSession = Depends(get_session)
 ):
     try:

@@ -57,7 +57,7 @@ class AuthRepository(BaseRepository):
             select(DBUser)
             .select_from(DBUser)
             .where(
-                DBUser.email == login
+                DBUser.username == login
             )
         )
 

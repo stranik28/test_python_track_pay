@@ -5,6 +5,9 @@ from api.request.base import RequestBase
 from pydantic import Field
 
 
+class RequestRegistrationForum(RequestBase):
+    username: str = Field(..., examples=['Nabiulina777'])
+
 class RequestRegistration(RequestBase):
     first_name: str = Field(..., examples=["Александр"])
     last_name: str = Field(..., examples=["Бородач"])

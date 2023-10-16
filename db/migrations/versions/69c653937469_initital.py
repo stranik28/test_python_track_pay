@@ -47,22 +47,24 @@ def upgrade():
     sa.UniqueConstraint('id', name=op.f('uq_transport_type_id'))
     )
     op.create_table('user',
-    sa.Column('first_name', sa.Text(), nullable=False),
-    sa.Column('last_name', sa.Text(), nullable=False),
-    sa.Column('middle_name', sa.Text(), nullable=False),
+    sa.Column('first_name', sa.Text(), nullable=True),
+    sa.Column('last_name', sa.Text(), nullable=True),
+    sa.Column('middle_name', sa.Text(), nullable=True),
     sa.Column('phone_number', sa.Text(), nullable=True),
     sa.Column('email', sa.VARCHAR(length=63), nullable=True),
     sa.Column('active', sa.Boolean(), server_default=sa.text('false'), nullable=True),
-    sa.Column('password', sa.Text(), nullable=False),
+    sa.Column('password', sa.Text(), nullable=True),
     sa.Column('block', sa.Boolean(), server_default=sa.text('false'), nullable=False),
     sa.Column('limit_rides', sa.Integer(), nullable=True),
+    sa.Column('username', sa.String(), nullable=False),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
     sa.Column('updated_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_user')),
-    sa.UniqueConstraint('email', name=op.f('uq_user_email')),
+    # sa.UniqueConstraint('email', name=op.f('uq_user_email')),
     sa.UniqueConstraint('id', name=op.f('uq_user_id')),
-    sa.UniqueConstraint('phone_number', name=op.f('uq_user_phone_number'))
+    # sa.UniqueConstraint('phone_number', name=op.f('uq_user_phone_number'))
+    sa.UniqueConstraint('username', name=op.f('uq_user_username'))
     )
     op.create_table('sbp_account',
     sa.Column('account_id', sa.Integer(), nullable=False),
@@ -154,7 +156,7 @@ def upgrade():
     )
     op.create_table('ride_payment',
     sa.Column('ride_id', sa.Integer(), nullable=False),
-    sa.Column('account_id', sa.Integer(), nullable=False),
+    sa.Column('account_id', sa.Integer(), nullable=True),
     sa.Column('status_id', sa.Integer(), nullable=False),
     sa.Column('amount', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
@@ -190,8 +192,8 @@ def upgrade():
     op.execute('''INSERT INTO payment_status(id, name, sort) VALUES (2, 'Оплачено', 2);''')
     op.execute('''INSERT INTO payment_status(id, name, sort) VALUES (3, 'Отклонено', 3);''')
     op.execute(
-        '''INSERT INTO public.user(first_name, last_name, middle_name, phone_number, email, active, password, block, 
-        limit_rides, id) VALUES ('Александр', 'Бородач', 'Родионович', '+74753149599', 'nikita@trackpay.com', false, 
+        '''INSERT INTO public.user(username,first_name, last_name, middle_name, phone_number, email, active, password, block, 
+        limit_rides, id) VALUES ('nikita@trackpay.com','Александр', 'Бородач', 'Родионович', '+74753149599', 'nikita@trackpay.com', false, 
         '123', false, null, 1);'''
     )
     op.execute('''INSERT INTO sbp_account(user_id, account_id, active) VALUES (1, 1, true);''')

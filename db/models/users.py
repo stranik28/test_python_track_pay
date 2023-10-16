@@ -5,22 +5,25 @@ from sqlalchemy import (
     text,
     Text,
     VARCHAR,
-    Integer
+    Integer,
+    String
 )
 
 
 class DBUser(BaseModel):
     __tablename__ = "user"
 
-    first_name = Column(Text, nullable=False)
-    last_name = Column(Text, nullable=False)
-    middle_name = Column(Text, nullable=False)
+    username = Column(String, nullable=False)
+
+    first_name = Column(Text, nullable=True)
+    last_name = Column(Text, nullable=True)
+    middle_name = Column(Text, nullable=True)
 
     phone_number = Column(Text, nullable=True, unique=True)
     email = Column(VARCHAR(63), nullable=True, unique=True)
     active = Column(Boolean, server_default=text("false"))
 
-    password = Column(Text, nullable=False)
+    password = Column(Text, nullable=True)
 
     block = Column(Boolean, nullable=False, server_default=text("false"))
 
