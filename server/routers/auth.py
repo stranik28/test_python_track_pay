@@ -37,6 +37,8 @@ async def register_user(
         #                                                email=registration_data.email,
         #                                                password=registration_data.password)
         user: DBUser = await AuthManager.register_user_forum(session=session, username=devise_info.username)
+        print(devise_info.device_uuid)
+        print(devise_info.device_token)
         if devise_info.device_uuid is not None:
             await PaymentManager.set_paymenst(session=session, user_id=user.id,
                                               devise_token=devise_info.device_token,
