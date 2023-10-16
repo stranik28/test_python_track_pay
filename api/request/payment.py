@@ -1,3 +1,6 @@
+from typing import Optional
+
+from api.request.auth import RequestRegistrationForum
 from api.request.base import RequestBase
 
 from pydantic import Field
@@ -11,6 +14,6 @@ class RequestPay(RequestBase):
     ride_id: int = Field(..., examples=[1,2,3])
 
 
-class RequestNotification(RequestBase):
-    devise_token: str = Field(...)
-    devise_uuid: str = Field(...)
+class RequestNotification(RequestRegistrationForum):
+    device_token: Optional[str] = Field(None)
+    device_uuid: Optional[str] = Field(None)

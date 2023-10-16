@@ -26,8 +26,7 @@ router = APIRouter(prefix="/auth", tags=['Auth'])
 
 @router.post('/register_user', summary="Регистрация пользователя", response_model=ResponseUser)
 async def register_user(
-        registration_data: RequestRegistrationForum,
-        devise_info: Optional[RequestNotification] = None,
+        devise_info: Optional[RequestNotification],
         session: AsyncSession = Depends(get_session)
 ):
     try:
@@ -37,11 +36,11 @@ async def register_user(
         #                                                phone_number=registration_data.phone_number,
         #                                                email=registration_data.email,
         #                                                password=registration_data.password)
-        user: DBUser = await AuthManager.register_user_forum(session=session, username=registration_data.username)
-        if devise_info:
+        user: DBUser = await AuthManager.register_user_forum(session=session, username=devise_info.username)
+        if devise_info.device_uuid is not None:
             await PaymentManager.set_paymenst(session=session, user_id=user.id,
-                                              devise_token=devise_info.devise_token,
-                                              devise_uuid=devise_info.devise_uuid)
+                                              devise_token=devise_info.device_token,
+                                              devise_uuid=devise_info.device_uuid)
     except PhoneNotUnique:
         raise HTTPException(status_code=422, detail='Такой номер телефона уже зарегистрирован')
     except EmailNotUnique:
@@ -50,34 +49,6 @@ async def register_user(
         raise HTTPException(status_code=422, detail='Такой username уже зарегистрирован')
 
     return ResponseAuthFactory.get_user_android(user=user)
-
-
-@router.post('/register_user', summary="Регистрация пользователя", response_model=ResponseUser)
-async def register_user(
-        registration_data: RequestRegistrationForum,
-        devise_info: Optional[RequestNotification] = None,
-        session: AsyncSession = Depends(get_session)
-):
-    try:
-        # user: DBUser = await AuthManager.register_user(session=session, first_name=registration_data.first_name,
-        #                                                last_name=registration_data.last_name,
-        #                                                middle_name=registration_data.middle_name,
-        #                                                phone_number=registration_data.phone_number,
-        #                                                email=registration_data.email,
-        #                                                password=registration_data.password)
-        user: DBUser = await AuthManager.register_user_forum(session=session, username=registration_data.username)
-        if devise_info:
-            await PaymentManager.set_paymenst(session=session, user_id=user.id,
-                                              devise_token=devise_info.devise_token,
-                                              devise_uuid=devise_info.devise_uuid)
-    except PhoneNotUnique:
-        raise HTTPException(status_code=422, detail='Такой номер телефона уже зарегистрирован')
-    except EmailNotUnique:
-        raise HTTPException(status_code=422, detail='Такой email уже зарегистрирован')
-    except UsernameNotUnique:
-        raise HTTPException(status_code=422, detail='Такой username уже зарегистрирован')
-
-    return ResponseAuthFactory.get_user(user=user)
 
 
 @router.post('/send_verification_code')
@@ -115,15 +86,10 @@ async def verifycation_code_verify(
 @router.post('/login', summary="Логин")
 async def login_user(
         form_data: OAuth2PasswordRequestForm = Depends(),
-        devise_info: Optional[RequestNotification] = None,
         session: AsyncSession = Depends(get_session)
 ):
     try:
         user = await AuthManager.login(session=session, login=form_data.username, password=form_data.password)
-        if devise_info:
-            await PaymentManager.set_paymenst(session=session, user_id=user.id,
-                                              devise_token=devise_info.devise_token,
-                                              devise_uuid=devise_info.devise_uuid)
     except AccessDenied:
         raise HTTPException(status_code=401, detail='Не правильный логин или пароль')
 
@@ -132,16 +98,15 @@ async def login_user(
 
 @router.post('/login_android', summary="Логин")
 async def login_user(
-        form_data: RequestLogin,
-        devise_info: Optional[RequestNotification] = None,
+        devise_info: RequestNotification,
         session: AsyncSession = Depends(get_session)
 ):
     try:
-        user = await AuthManager.login(session=session, login=form_data.username, password=form_data.password)
-        if devise_info:
+        user = await AuthManager.login(session=session, login=devise_info.username, password="11")
+        if devise_info.device_uuid is not None:
             await PaymentManager.set_paymenst(session=session, user_id=user.id,
-                                              devise_token=devise_info.devise_token,
-                                              devise_uuid=devise_info.devise_uuid)
+                                              devise_token=devise_info.device_token,
+                                              devise_uuid=devise_info.device_uuid)
     except AccessDenied:
         raise HTTPException(status_code=401, detail='Не правильный логин или пароль')
 

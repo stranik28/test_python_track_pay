@@ -78,5 +78,5 @@ async def set_new_notification(
     session: AsyncSession = Depends(get_session)
 ):
     await PaymentManager.set_paymenst(session=session, user_id=user_id,
-                                      devise_token=devise_info.devise_token,
-                                      devise_uuid=devise_info.devise_uuid)
+                                      devise_token=devise_info.device_token,
+                                      devise_uuid=devise_info.device_uuid)
