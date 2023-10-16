@@ -97,7 +97,7 @@ class RideManager:
             ),
             token=registration_token,
             data={
-                "id": "8"
+                "id": "1"
             }
         )
         response = messaging.send(message)
