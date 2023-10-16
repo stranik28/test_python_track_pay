@@ -12,4 +12,9 @@ class ResponseAuthFactory:
 
     @staticmethod
     def get_user(user: DBUser) -> ResponseUser:
-        return ResponseUser(user_id=user.id, access_token=str("Bearer " + get_access_token(user)))
+        return ResponseUser(user_id=user.id, access_token=get_access_token(user))
+
+
+    @staticmethod
+    def get_user_android(user: DBUser) -> ResponseUser:
+        return ResponseUser(user_id=user.id, access_token=str('Bearer ' + get_access_token(user)))
