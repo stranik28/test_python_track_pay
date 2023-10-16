@@ -195,7 +195,7 @@ def upgrade():
         '123', false, null, 1);'''
     )
     op.execute('''INSERT INTO sbp_account(user_id, account_id, active) VALUES (1, 1, true);''')
-    op.execute('''INSERT INTO uuid_device(id,token,uuid, user_id) VALUES (1, 'co8Kp5PNR_uBLOShRgndZn:APA91bEPcavU3wdsg3ZJaXy6MZqALYAJUuIffXq85kj719tvNCO6UNDVp5Ezw2-l0Kk-jRlBO7U1ZBZ3kFdk14vMIJ-7vDMGWdW2c2apncF61kELYXihYHcr2211PVpxPwQUZIZkKvs7', '2f893eaf-2 afa-4028-bd53-08a56197707e', 1);''')
+    op.execute('''INSERT INTO uuid_device(id,token,uuid, user_id) VALUES (1, 'ePDrxl4xTbO4Y-vapvAYSt:APA91bGH13DFqtlBQ4Q7W0EXnk3c-iWMTNcLQwC_o5EqQ4ChvSk2D4yhDywjhgTeSWWfFwXmXxMSnngWIdbpyxY9xv5eAJqWkXNrAz8u6jeh5DXNEwSLBZG4uUZxzt31WxZkKiCFmg91', '2f893eaf-2 afa-4028-bd53-08a56197707e', 1);''')
     op.execute('''INSERT INTO bluetooth_device(id, transport_id, mac_address) VALUES (5, 2, '30:AE:A4:74:A2:C6');''')
     op.execute('''INSERT INTO preference_account(id, user_id, account_id) VALUES (1, 1, 1);''')
     op.execute('''INSERT INTO bluetooth_device(id, transport_id, mac_address) VALUES (6, 2, '80:38:FB:13:0F:73');''')
