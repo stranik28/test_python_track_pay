@@ -1,4 +1,5 @@
 import datetime
+from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -104,7 +105,7 @@ class RideManager:
         print(response)
 
     @classmethod
-    async def esp_touch(cls, session: AsyncSession, uuid: str, esp_id: int):
+    async def esp_touch(cls, session: AsyncSession, uuid: str, esp_id: int, admin: Optional[bool] = None):
         user_exist: list[DBUuidUsers] = await UserRepository(session).get_user_by_uuid(uuid)
         if user_exist == []:
             print("User")
@@ -133,7 +134,7 @@ class RideManager:
         last_ride = await RideRepository(session).get_full_ride_history(user_id=user_exist.id, timedelta_=timedelta_,
                                                                         transport_id=esp.transport.id, limit=1, offset=0)
 
-        if last_ride != []:
+        if last_ride != [] and not admin:
             print("Уже покатался")
             raise RideAlreadyDone
 
@@ -142,7 +143,8 @@ class RideManager:
         # Send push
 
         print("Success Ride")
-
+        print(user_exist.token)
+        print(ride.id)
         await cls.send_message(registration_token=user_exist.token, ride_id=ride.id)
 
         return ride

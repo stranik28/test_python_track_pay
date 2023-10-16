@@ -82,6 +82,26 @@ async def touch(
     return {"result": uuid}
 
 
+@router.get('/touch_esp/{esp_id}/{uuid}/admin', status_code=200)
+async def touch(
+        uuid: str,
+        esp_id: int,
+        session: AsyncSession = Depends(get_session)
+):
+    try:
+        await RideManager.esp_touch(session=session, uuid=uuid, esp_id=esp_id, admin=True)
+    except UserNotFound:
+        raise HTTPException(status_code=404, detail="Пользователь с таким uuid не найден ")
+    except NotSureToCreateRide:
+        raise HTTPException(status_code=401, detail="Недостаточно пока оснований для создания поездки")
+    except RideAlreadyDone:
+        raise HTTPException(status_code=401, detail="Недостаточно пока оснований для создания поездки")
+    except EspNotFound:
+        raise HTTPException(status_code=400, detail="Не найденно доверненного устрйоства с таким id")
+    print(f"Ought uuid is {uuid} from esp {esp_id}")
+    return {"result": uuid}
+
+
 @router.get('/{ride_id}', response_model=RideResponse)
 async def get_ride(
         ride_id: int,

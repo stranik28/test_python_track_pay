@@ -105,6 +105,7 @@ class PaymentManager:
 
         exist.token = devise_token
         exist.uuid = devise_uuid
-
+        print(devise_uuid)
+        print(devise_token)
         await session.commit()
         return
