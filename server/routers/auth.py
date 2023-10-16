@@ -25,12 +25,13 @@ async def register_user(
         session: AsyncSession = Depends(get_session)
 ):
     try:
-        user: DBUser = await AuthManager.register_user(session=session, first_name=registration_data.first_name,
-                                                       last_name=registration_data.last_name,
-                                                       middle_name=registration_data.middle_name,
-                                                       phone_number=registration_data.phone_number,
-                                                       email=registration_data.email,
-                                                       password=registration_data.password)
+        # user: DBUser = await AuthManager.register_user(session=session, first_name=registration_data.first_name,
+        #                                                last_name=registration_data.last_name,
+        #                                                middle_name=registration_data.middle_name,
+        #                                                phone_number=registration_data.phone_number,
+        #                                                email=registration_data.email,
+        #                                                password=registration_data.password)
+        user: DBUser = await AuthManager.register_user_forum(session=session, username=registration_data.username)
     except PhoneNotUnique:
         raise HTTPException(status_code=422, detail='Такой номер телефона уже зарегистрирован')
     except EmailNotUnique:

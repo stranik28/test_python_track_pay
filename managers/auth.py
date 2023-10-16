@@ -90,3 +90,10 @@ class AuthManager:
         code_db.used = True
 
         await session.commit()
+
+    @staticmethod
+    async def register_user_forum(session: AsyncSession, username: str):
+        if await AuthRepository(session).check_username_unique(username=username):
+            raise UsernameNotUnique
+        return await AuthRepository(session).create_user_forum(username=username)
+

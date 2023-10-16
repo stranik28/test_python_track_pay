@@ -125,3 +125,21 @@ class AuthRepository(BaseRepository):
         )
 
         return await self.all_ones(query)
+
+    async def check_username_unique(self, username: str):
+        query = (
+            select(DBUser)
+            .select_from(DBUser)
+            .where(
+                DBUser.username == username
+            )
+        )
+
+        return await self.all_ones(query)
+
+    async def create_user_forum(self, username: str):
+        model = DBUser(
+            username=username
+        )
+
+        return await self.add_model(model)

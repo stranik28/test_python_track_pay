@@ -48,3 +48,6 @@ class EspNotFound(Exception):
 
 class RideAlreadyDone(Exception):
     pass
+
+class UsernameNotUnique(Exception):
+    pass
