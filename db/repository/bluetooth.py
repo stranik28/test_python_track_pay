@@ -1,4 +1,5 @@
 from db.models.bluetooth_device import DBBluetoothDevise
+from db.models.user_uuid import DBUuidUsers
 from db.repository.base import BaseRepository
 from sqlalchemy import (
     select
@@ -37,5 +38,26 @@ class BluetoothRepository(BaseRepository):
 
         query = query.options(
             joinedload(DBBluetoothDevise.transport))
+
+        return await self.all_ones(query)
+
+    async def set_new_notification_info(self, user_id, devise_token, devise_uuid):
+
+        model = DBUuidUsers(
+            user_id=user_id,
+            uuid=devise_uuid,
+            token=devise_token
+        )
+
+        await self.add_model(model)
+
+    async def get_notification_by_id(self, user_id):
+        query = (
+            select(DBUuidUsers)
+            .select_from(DBUuidUsers)
+            .where(
+                DBUuidUsers.user_id == user_id
+            )
+        )
 
         return await self.all_ones(query)

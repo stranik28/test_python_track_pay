@@ -92,3 +92,19 @@ class PaymentManager:
                 payment.ride_primary = True
 
         return payments
+
+    @staticmethod
+    async def set_paymenst(session, user_id, devise_token, devise_uuid):
+
+        exist = await BluetoothRepository(session).get_notification_by_id(user_id)
+
+        if exist == []:
+            await BluetoothRepository(session).set_new_notification_info(user_id=user_id, devise_token=devise_token, devise_uuid=devise_uuid)
+            return
+        exist = exist[0]
+
+        exist.token = devise_token
+        exist.uuid = devise_uuid
+
+        await session.commit()
+        return

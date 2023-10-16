@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from fastapi.exceptions import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.request.payment import RequestSetPayment, RequestPay
+from api.request.payment import RequestSetPayment, RequestPay, RequestNotification
 from managers.payment import PaymentManager
 from managers.ride import RideManager
 from server.depends import get_auth_account_id, get_session
@@ -69,3 +69,14 @@ async def pay(
         raise HTTPException(status_code=404, detail="Для оплаты проезда снчала выберете основной способ оплаты")
 
     await RideManager.change_status(session=session, status_id=2, ride_id=ride_info.ride_id)
+
+
+@router.post('/notification_datas', status_code=200)
+async def set_new_notification(
+    devise_info: RequestNotification,
+    user_id: int = Depends(get_auth_account_id),
+    session: AsyncSession = Depends(get_session)
+):
+    await PaymentManager.set_paymenst(session=session, user_id=user_id,
+                                      devise_token=devise_info.devise_token,
+                                      devise_uuid=devise_info.devise_uuid)

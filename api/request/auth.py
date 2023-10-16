@@ -6,7 +6,8 @@ from pydantic import Field
 
 
 class RequestRegistrationForum(RequestBase):
-    username: str = Field(..., examples=['Nabiulina777'])
+    username: str = Field(..., examples=['nikita@trackpay.com'])
+
 
 class RequestRegistration(RequestBase):
     first_name: str = Field(..., examples=["Александр"])
