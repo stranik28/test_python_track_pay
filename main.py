@@ -10,11 +10,9 @@ app = FastAPI(
     title="Track Pay"
 )
 
-
-firebase_cred = credentials.Certificate("track-pay.json")
-firebase_app = firebase_admin.initialize_app(firebase_cred)
-
-
+if not firebase_admin._apps:
+    firebase_cred = credentials.Certificate("track-pay.json")
+    firebase_app = firebase_admin.initialize_app(firebase_cred)
 
 for router in all_routers:
     app.include_router(router)

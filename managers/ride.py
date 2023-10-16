@@ -85,7 +85,7 @@ class RideManager:
         return ride
 
     @staticmethod
-    async def send_message(registration_token: str):
+    async def send_message(registration_token: str, ride_id: int):
         from firebase_admin import messaging
         message = messaging.Message(
             notification=messaging.Notification(
@@ -97,7 +97,7 @@ class RideManager:
             ),
             token=registration_token,
             data={
-                "id": "1"
+                "id": str(ride_id)
             }
         )
         response = messaging.send(message)
@@ -115,10 +115,10 @@ class RideManager:
         await RideRepository(session).add_touch(uuid=uuid, esp_id=esp_id)
         # timdelta = datetime.timedelta(minutes=10)
         timdelta = datetime.timedelta(seconds=40)
-        last_touches: int = await RideRepository(session).count_last_touche(uuid=uuid, time=timdelta)
+        last_touches: list[int] = await RideRepository(session).count_last_touche(uuid=uuid, time=timdelta)
 
         if last_touches != []:
-            if last_touches[0] < 5:
+            if last_touches[0] < 1:
                 print("Not sure")
                 raise NotSureToCreateRide
 
@@ -129,13 +129,13 @@ class RideManager:
             raise EspNotFound
 
         esp = esp[0]
-        timedelta_ = datetime.timedelta(hours=1)
+        timedelta_ = datetime.timedelta(minutes=1)
         last_ride = await RideRepository(session).get_full_ride_history(user_id=user_exist.id, timedelta_=timedelta_,
                                                                         transport_id=esp.transport.id, limit=1, offset=0)
 
-        # if last_ride != []:
-        #     print("Уже покатался")
-        #     raise RideAlreadyDone
+        if last_ride != []:
+            print("Уже покатался")
+            raise RideAlreadyDone
 
         ride = await RideRepository(session).create_ride(user_id=user_exist.id, transport_id=esp.transport.id)
 
@@ -143,6 +143,6 @@ class RideManager:
 
         print("Success Ride")
 
-        await cls.send_message(user_exist.token)
+        await cls.send_message(registration_token=user_exist.token, ride_id=ride.id)
 
         return ride
