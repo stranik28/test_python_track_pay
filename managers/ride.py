@@ -133,9 +133,9 @@ class RideManager:
         last_ride = await RideRepository(session).get_full_ride_history(user_id=user_exist.id, timedelta_=timedelta_,
                                                                         transport_id=esp.transport.id, limit=1, offset=0)
 
-        if last_ride != []:
-            print("Уже покатался")
-            raise RideAlreadyDone
+        # if last_ride != []:
+        #     print("Уже покатался")
+        #     raise RideAlreadyDone
 
         ride = await RideRepository(session).create_ride(user_id=user_exist.id, transport_id=esp.transport.id)
 
