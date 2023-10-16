@@ -53,6 +53,7 @@ async def touch(
         session: AsyncSession = Depends(get_session)
 ):
     for data in datas.bluetooth_mac:
+        print(datas)
         try:
             ride: DBRide = await RideManager.touch(session=session, user_id=user_id, bluetooth_mac=data)
         except BluetoothNotFound:
