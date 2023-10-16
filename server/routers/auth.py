@@ -14,7 +14,7 @@ from managers.auth import AuthManager
 
 from server.depends import get_session, get_auth_account_id_unverified
 
-from vendors.exception import EmailNotUnique, PhoneNotUnique, AccessDenied, SpamError
+from vendors.exception import EmailNotUnique, PhoneNotUnique, AccessDenied, SpamError, UsernameNotUnique
 
 router = APIRouter(prefix="/auth", tags=['Auth'])
 
@@ -36,6 +36,8 @@ async def register_user(
         raise HTTPException(status_code=422, detail='Такой номер телефона уже зарегистрирован')
     except EmailNotUnique:
         raise HTTPException(status_code=422, detail='Такой email уже зарегистрирован')
+    except UsernameNotUnique:
+        raise HTTPException(status_code=422, detail='Такой username уже зарегистрирован')
 
     return ResponseAuthFactory.get_user(user=user)
 

@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db.models.users import DBUser
 from db.models.verification_code import DBVerifyCode
 from db.repository.auth import AuthRepository
-from vendors.exception import PhoneNotUnique, EmailNotUnique, AccessDenied, CodeNotValid, SpamError
+from vendors.exception import PhoneNotUnique, EmailNotUnique, AccessDenied, CodeNotValid, SpamError, UsernameNotUnique
 
 import smtplib
 from email.mime.text import MIMEText
