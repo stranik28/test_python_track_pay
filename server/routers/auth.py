@@ -49,7 +49,7 @@ async def register_user(
     except UsernameNotUnique:
         raise HTTPException(status_code=422, detail='Такой username уже зарегистрирован')
 
-    return ResponseAuthFactory.get_user(user=user)
+    return ResponseAuthFactory.get_user_android(user=user)
 
 
 @router.post('/register_user', summary="Регистрация пользователя", response_model=ResponseUser)
@@ -115,6 +115,7 @@ async def verifycation_code_verify(
 @router.post('/login', summary="Логин")
 async def login_user(
         form_data: OAuth2PasswordRequestForm = Depends(),
+        devise_info: Optional[RequestNotification] = None,
         session: AsyncSession = Depends(get_session)
 ):
     try:
