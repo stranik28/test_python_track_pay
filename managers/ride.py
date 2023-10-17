@@ -108,13 +108,14 @@ class RideManager:
     @classmethod
     async def esp_touch(cls, session: AsyncSession, uuid: str, esp_id: int, admin: Optional[bool] = None):
         user_exist: list[DBUuidUsers] = await UserRepository(session).get_user_by_uuid(uuid)
+
         if user_exist == []:
             print("User")
             raise UserNotFound
         user_exist = user_exist[0]
         user_exist_users_tokens = user_exist
         user_exist = user_exist[0]
-
+        print(user_exist.id)
         await RideRepository(session).add_touch(uuid=uuid, esp_id=esp_id)
         # timdelta = datetime.timedelta(minutes=10)
         timdelta = datetime.timedelta(seconds=40)
