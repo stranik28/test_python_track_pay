@@ -115,7 +115,7 @@ class RideManager:
         user_exist = user_exist[0]
         user_exist_users_tokens = user_exist
         user_exist = user_exist[0]
-        print(user_exist.id)
+        print(user_exist.usernname)
         await RideRepository(session).add_touch(uuid=uuid, esp_id=esp_id)
         # timdelta = datetime.timedelta(minutes=10)
         timdelta = datetime.timedelta(seconds=40)
