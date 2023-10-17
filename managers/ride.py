@@ -141,7 +141,7 @@ class RideManager:
             print("Уже покатался")
             raise RideAlreadyDone
 
-        ride = await RideRepository(session).create_ride(user_id=user_exist.id, transport_id=esp.transport.id)
+        ride = await RideRepository(session).create_ride(user_id=user_exist.user_id, transport_id=esp.transport.id)
 
         # Send push
 
