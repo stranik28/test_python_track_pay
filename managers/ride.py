@@ -74,10 +74,11 @@ class RideManager:
     @classmethod
     async def get_ride(cls, session: AsyncSession, ride_id: int, user_id: int) -> DBRide:
         ride: list[DBRide] = await RideRepository(session).get_by_id(id_=ride_id)
-
+        print(user_id)
         if ride == [] or ride is None:
             raise RideNotFound
         ride = ride[0]
+        print(ride.user_id)
         if ride.user_id != user_id:
             raise AccessDenied
 
