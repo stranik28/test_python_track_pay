@@ -34,7 +34,7 @@ class RideResponse(ResponseBase):
     price: int = Field(...)
     payment_method: str = Field(...)
     licence_plate: str = Field(...)
-    status: RideStatusResponse = Field(...)
+    status_id: int = Field(...)
     qr: str = Field(...)
 
 
@@ -58,7 +58,7 @@ class RideResponseFactory:
             price=model.transport.price,
             payment_method="СБП",
             licence_plate=str(model.transport.number + model.transport.region_numb),
-            status=RideStatusFactory.get_from_model(model.status),
+            status=model.status.id,
             qr="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"
         )
 
