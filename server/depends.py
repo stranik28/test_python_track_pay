@@ -21,6 +21,7 @@ oauth2_scheme_account = OAuth2PasswordBearer(
 
 def get_access_token(self, life_time_days: int = 180) -> str:
     payload = {
+
         'sub': f"{self.id}",
         'exp': datetime.now() + timedelta(days=life_time_days),
         'is_email_confirmed': self.active
