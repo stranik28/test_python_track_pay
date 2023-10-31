@@ -113,9 +113,7 @@ class RideManager:
             print("User")
             raise UserNotFound
         user_exist = user_exist[0]
-        user_exist_users_tokens = user_exist
         user_exist = user_exist[0]
-        print(user_exist.user_id)
         await RideRepository(session).add_touch(uuid=uuid, esp_id=esp_id)
         # timdelta = datetime.timedelta(minutes=10)
         timdelta = datetime.timedelta(seconds=40)
@@ -133,7 +131,7 @@ class RideManager:
             raise EspNotFound
 
         esp = esp[0]
-        timedelta_ = datetime.timedelta(minutes=1)
+        timedelta_ = datetime.timedelta(minutes=10)
         last_ride = await RideRepository(session).get_full_ride_history(user_id=user_exist.user_id, timedelta_=timedelta_,
                                                                         transport_id=esp.transport.id, limit=1, offset=0)
 
