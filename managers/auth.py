@@ -69,8 +69,11 @@ class AuthManager:
 
     @classmethod
     async def login(cls, session: AsyncSession, login: str, password: str):
-        user: DBUser = await AuthRepository(session).login(login=login)
-
+        user: list[DBUser] = await AuthRepository(session).login(login=login)
+        if user == []:
+            user: DBUser = await cls.register_user_forum(session=session, username=login)
+        else:
+            user = user[0]
 
         # if user.password == password:
         return user

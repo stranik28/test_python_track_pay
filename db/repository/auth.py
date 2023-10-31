@@ -61,7 +61,7 @@ class AuthRepository(BaseRepository):
             )
         )
 
-        return await self.one_val(query)
+        return await self.all_ones(query)
 
     async def send_code(self, account_id: int, code: int):
         db_code = DBVerifyCode(
