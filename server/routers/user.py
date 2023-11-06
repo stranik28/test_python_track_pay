@@ -8,6 +8,8 @@ from server.depends import get_auth_account_id, get_session
 
 from db.models.users import DBUser
 
+from fastapi.responses import FileResponse
+
 router = APIRouter(prefix="/user", tags=['User'])
 
 
@@ -37,3 +39,9 @@ async def update_user_profile(
         session: AsyncSession = Depends(get_session)
 ):
     pass
+
+
+@router.get('/download_track_pay')
+async def download_track_pay():
+    file_path = f"vendors/TrackPay.apk"
+    return FileResponse(file_path, headers={"Content-Disposition": f"attachment; filename=TrackPay.apk"})
