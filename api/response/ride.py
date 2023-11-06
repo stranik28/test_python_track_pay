@@ -59,7 +59,8 @@ class RideResponseFactory:
             payment_method="СБП",
             licence_plate=str(model.transport.number + model.transport.region_numb),
             status_id=model.status.id,
-            qr="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"
+            qr="https://sun9-27.userapi.com/impg/RPZmHDK5DzEnfxlsJWXvuAv6Q9cCjoH0XRY7Sg/FRr-eLV7Sc4.jpg?size"
+               "=1280x1280&quality=96&sign=f48d2873e72d5d9515919c01a41c08c8&type=album"
         )
 
 
