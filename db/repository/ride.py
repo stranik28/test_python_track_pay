@@ -140,7 +140,13 @@ class RideRepository(BaseRepository):
 
     async def get_full_ride_history(self, user_id: int, limit: int, offset: int, timedelta_: timedelta,
                                     transport_id: int) -> list[DBRide]:
-        end_time = datetime.now()
+        current_time = datetime.now()
+
+        # Создайте объект timedelta, представляющий интервал в 3 часа
+        three_hours = timedelta(hours=3)
+
+        # Добавьте интервал к текущему времени
+        end_time = current_time + three_hours
         start_time = end_time - timedelta_
         query = (
             select(DBRide)
