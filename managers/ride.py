@@ -116,7 +116,7 @@ class RideManager:
         user_exist = user_exist[0]
         await RideRepository(session).add_touch(uuid=uuid, esp_id=esp_id)
         # timdelta = datetime.timedelta(minutes=10)
-        timdelta = datetime.timedelta(seconds=40)
+        timdelta = datetime.timedelta(hours=3, seconds=40)
         last_touches: list[int] = await RideRepository(session).count_last_touche(uuid=uuid, time=timdelta)
 
         if last_touches != []:
