@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from typing import Optional
 
 from db.models.preference_accounts import DBPreferenceAccount
@@ -14,6 +15,9 @@ from sqlalchemy import (
 class PaymentRepository(BaseRepository):
 
     async def pay(self, ride_id: int, account_id: Optional[int], status_id: int, ammount: int):
+
+        # Добавьте интервал к текущему времени
+
         model = DBRidePayment(
             ride_id=ride_id,
             # account_id=account_id,

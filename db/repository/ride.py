@@ -41,10 +41,17 @@ class RideRepository(BaseRepository):
         return await self.all_ones(query)
 
     async def create_ride(self, user_id: int, transport_id: int, status_id: int = 1) -> DBRide:
+        # Получите текущее время
+        current_time = datetime.now()
+
+        # Создайте объект timedelta, представляющий интервал в 3 часа
+        three_hours = timedelta(hours=3)
+        new_time = current_time + three_hours
         ride = DBRide(
             user_id=user_id,
             transport_id=transport_id,
-            status_id=status_id
+            status_id=status_id,
+            created_at=new_time
         )
 
         await self.add_model(ride)
